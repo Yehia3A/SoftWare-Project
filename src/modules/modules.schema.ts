@@ -1,13 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
+import { Course } from '../courses/courses.schema'; // Import Course schema
 
-@Schema({ timestamps: true }) // Automatically adds createdAt and updatedAt timestamps
+@Schema({ timestamps: true })
 export class Module extends Document {
   @Prop({ required: true, unique: true })
   module_id: string;
 
-  @Prop({ required: true })
-  course_id: string;
+  // Reference to Course schema
+  @Prop({ type: Types.ObjectId, ref: 'Course', required: true })
+  course_id: Types.ObjectId;
 
   @Prop({ required: true })
   title: string;
@@ -15,10 +17,10 @@ export class Module extends Document {
   @Prop({ required: true })
   content: string;
 
-  @Prop({ type: [String], default: [] }) // Optional array of strings
+  @Prop({ type: [String], default: [] })
   resources: string[];
 
-  @Prop({ default: Date.now }) // Automatically sets the creation time
+  @Prop({ default: Date.now })
   created_at: Date;
 }
 
