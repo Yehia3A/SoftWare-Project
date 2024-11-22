@@ -12,6 +12,7 @@ const mongoose_1 = require("@nestjs/mongoose");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const quizzes_module_1 = require("./quizzes/quizzes.module");
+const user_interactions_module_1 = require("./user-interactions/user-interactions.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -20,6 +21,7 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             mongoose_1.MongooseModule.forRoot('mongodb+srv://elearning:elearning123@cluster0.3ylmz.mongodb.net/'),
             quizzes_module_1.QuizzesModule,
+            user_interactions_module_1.UserInteractionsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
