@@ -4,9 +4,7 @@ import { Document, Types } from 'mongoose';
 @Schema({ timestamps: true })
 export class Chat extends Document {
 
-    @Prop({ required: true, unique: true })
-    chatId: string;
-
+  
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   sender: Types.ObjectId;
 

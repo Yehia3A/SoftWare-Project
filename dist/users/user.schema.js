@@ -15,10 +15,6 @@ let User = class User {
 };
 exports.User = User;
 __decorate([
-    (0, mongoose_1.Prop)({ required: true, unique: true }),
-    __metadata("design:type", String)
-], User.prototype, "user_id", void 0);
-__decorate([
     (0, mongoose_1.Prop)({ required: true }),
     __metadata("design:type", String)
 ], User.prototype, "name", void 0);
@@ -31,11 +27,11 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "password_hash", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: true, enum: ['student', 'instructor', 'admin'] }),
+    (0, mongoose_1.Prop)({ required: true, enum: ['student', 'instructor', 'admin'], default: 'student' }),
     __metadata("design:type", String)
 ], User.prototype, "role", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({}),
+    (0, mongoose_1.Prop)({ required: false }),
     __metadata("design:type", String)
 ], User.prototype, "profilePictureUrl", void 0);
 exports.User = User = __decorate([

@@ -4,8 +4,7 @@ import { Module } from '../modules/modules.schema'; // Import Module schema
 
 @Schema({ timestamps: true })
 export class Quizzes extends Document {
-    @Prop({ required: true, unique: true })
-    quiz_id: String;
+
 
     @Prop({ type: Types.ObjectId, ref: 'Module', required: true })
     moudule_id: Types.ObjectId;

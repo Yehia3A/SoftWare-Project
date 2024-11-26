@@ -1,15 +1,22 @@
-import { Module } from '@nestjs/common'; // Import the Module decorator
-import { MongooseModule } from '@nestjs/mongoose'; // Import MongooseModule
-import { User, UserSchema } from './user.schema'; // Import User schema
-import { UsersController } from './users.controller'; // Controller (if it exists)
-import { UsersService } from './users.service'; // Service (if it exists)
+import { Module, forwardRef } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { JwtModule } from '@nestjs/jwt';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
+import { AuthModule } from 'src/auth/auth/auth.module';  // Correct path to AuthModule
+import { UserSchema } from './user.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'your-secret-key',  // Use environment variable for the secret
+      signOptions: { expiresIn: '24h' },
+    }),
+    forwardRef(() => AuthModule),  // Using forwardRef here too to avoid circular dependency
   ],
-  controllers: [UsersController], // Include your UsersController
-  providers: [UsersService], // Include your UsersService
-  exports: [UsersService], // Export UsersService if needed in other modules
+  controllers: [UsersController],
+  providers: [UsersService],
+  exports: [UsersService],
 })
 export class UsersModule {}

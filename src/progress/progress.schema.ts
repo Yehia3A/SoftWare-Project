@@ -5,8 +5,6 @@ import { User } from '../users/user.schema';
 
 @Schema({ timestamps: true })
 export class Progress extends Document {
-@Prop({ required: true, unique:true })
-progress_ID: string;
 
   
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
