@@ -1,26 +1,24 @@
-import {Prop, Schema, SchemaFactory} from '@nestjs/mongoose'
-import { Document } from 'mongoose'
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
 
-@Schema({timestamps: true})
-export class Course extends Document{
+export type CourseDocument = HydratedDocument<Course>;
 
-    @Prop({required: true})
-    title: string;
+@Schema({ timestamps: true }) // Automatically manages `createdAt` and `updatedAt`
+export class Course {
+    @Prop({ required: true })
+    title: string; // Course title
 
-    @Prop({default: 'This course has no description'})
-    desc: string;
+    @Prop({ default: 'This course has no description' })
+    description: string; // Optional course description with a default value
 
-    @Prop({required: true})
-    category: string;
+    @Prop({ required: true })
+    category: string; // Course category (e.g., Math, CS)
 
-    @Prop({required: true})
-    difficulty: string;
+    @Prop({ required: true })
+    difficulty: 'Beginner' | 'Intermediate' | 'Advanced'; // Difficulty level
 
-    @Prop({required: true})
-    createdBy: string;
-
-    @Prop({default: Date.now})
-    createdAt: Date;
+    @Prop({ required: true })
+    createdBy: string; // ID of the instructor who created the course
 }
 
-export const CoursesSchema = SchemaFactory.createForClass(Course);
+export const CourseSchema = SchemaFactory.createForClass(Course);
