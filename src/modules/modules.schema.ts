@@ -3,10 +3,6 @@ import { HydratedDocument, Types } from 'mongoose';
 import { Course } from '../courses/courses.schema'; // Reference the Course schema for the relationship
 
 export type ModuleDocument = HydratedDocument<Module>; // Export the document type for use in services, etc.
-
-@Schema({ timestamps: true }) // Automatically manage createdAt and updatedAt fields
-export class Module {
-  // Reference to the Course schema (relationship)
   @Prop({ type: Types.ObjectId, ref: Course.name, required: true })
   course_id: Types.ObjectId;
 
