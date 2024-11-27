@@ -5,10 +5,6 @@ import { Course } from '../courses/courses.schema'; // Import Course schema
 @Schema({ timestamps: true })
 export class Module extends Document {
 
-  // Reference to Course schema
-  @Prop({ type: Types.ObjectId, ref: 'Course', required: true })
-  course_id: Types.ObjectId;
-
   @Prop({ required: true })
   title: string;
 
