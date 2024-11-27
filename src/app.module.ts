@@ -8,7 +8,7 @@ import { RecommendationsModule } from './recommendations/recommendations.module'
 import { UsersModule } from './users/user.module';
 import { CoursesModule } from './courses/courses.module';
 import { ModulesModule } from './modules/modules.module';
-import { progressesModule } from './progress/progress.module';
+import { ProgressesModule } from './progress/progress.module';
 import { AuthModule } from './auth/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 
@@ -22,7 +22,7 @@ import { ConfigModule } from '@nestjs/config';
     UsersModule,
     CoursesModule,
     ModulesModule,
-    progressesModule,
+    ProgressesModule,
     AuthModule
   ],
   controllers: [AppController],

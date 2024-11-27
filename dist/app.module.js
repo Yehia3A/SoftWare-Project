@@ -34,7 +34,7 @@ exports.AppModule = AppModule = __decorate([
             user_module_1.UsersModule,
             courses_module_1.CoursesModule,
             modules_module_1.ModulesModule,
-            progress_module_1.progressesModule,
+            progress_module_1.ProgressesModule,
             auth_module_1.AuthModule
         ],
         controllers: [app_controller_1.AppController],
