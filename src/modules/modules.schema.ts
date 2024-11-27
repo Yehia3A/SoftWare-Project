@@ -1,22 +1,19 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
-import { Course } from '../courses/courses.schema'; // Reference the Course schema for the relationship
+import { Document, Types } from 'mongoose';
+import { Course } from '../courses/courses.schema'; // Import Course schema
 
-export type ModuleDocument = HydratedDocument<Module>; // Export the document type for use in services, etc.
-  @Prop({ type: Types.ObjectId, ref: Course.name, required: true })
-  course_id: Types.ObjectId;
-
-  @Prop({ required: true })
-  title: string; // Title of the module
+@Schema({ timestamps: true })
+export class Module extends Document {
 
   @Prop({ required: true })
-  content: string; // Content of the module
+  title: string;
+
+  @Prop({ required: true })
+  content: string;
 
   @Prop({ type: [String], default: [] })
-  resources: string[]; // Array of URLs to additional resources
+  resources: string[];
 
-  // The `timestamps: true` option already adds `createdAt` and `updatedAt` fields,
-  // so this is not needed unless you want a custom date field.
   @Prop({ default: Date.now })
   created_at: Date;
 }

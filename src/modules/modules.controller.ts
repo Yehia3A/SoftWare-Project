@@ -1,18 +1,4 @@
-import { Controller, Post, Get, Param, Body } from '@nestjs/common';
-import { ModulesService } from './modules.service';
-import { CreateModuleDto } from 'src/courses/dto/create-module.dto';
+import { Controller } from '@nestjs/common';
 
 @Controller('modules')
-export class ModulesController {
-    constructor(private readonly modulesService: ModulesService) { }
-
-    @Post()
-    createModule(@Body() createModuleDto: CreateModuleDto) {
-        return this.modulesService.createModule(createModuleDto);
-    }
-
-    @Get(':courseId')
-    getModulesByCourseId(@Param('courseId') courseId: string) {
-        return this.modulesService.getModulesByCourseId(courseId);
-    }
-}
+export class ModulesController {}
