@@ -15,7 +15,7 @@ import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
     ConfigModule.forRoot(),  // Load environment variables from .env
-    MongooseModule.forRoot(process.env.MONGODB_URI),  // Use the MONGODB_URI from environment variables
+    MongooseModule.forRoot("mongodb+srv://elearning:elearning123@cluster0.3ylmz.mongodb.net/E-learning"),  
     QuizzesModule,
     UserInteractionsModule,
     RecommendationsModule,
