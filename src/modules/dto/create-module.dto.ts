@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString, IsArray, IsOptional } from 'class-validator';
 export class CreateModuleDto {
     @IsNotEmpty()
     @IsString()
-    courseId: string;
+    course_id: string; // Updated to match the schema field name
 
     @IsNotEmpty()
     @IsString()
@@ -15,5 +15,6 @@ export class CreateModuleDto {
 
     @IsOptional()
     @IsArray()
+    @IsString({ each: true }) // Validate each array element
     resources: string[];
 }

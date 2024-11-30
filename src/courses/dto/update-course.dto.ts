@@ -1,5 +1,4 @@
-import { PartialType } from '@nestjs/mapped-types'; // allows one attribute to be changed if needed
+import { PartialType } from '@nestjs/mapped-types';
 import { CreateCourseDto } from './create-course.dto';
 
-export class UpdateCourseDto extends PartialType(CreateCourseDto) { } 
-//nothing added since no new field will be added
+export class UpdateCourseDto extends PartialType(CreateCourseDto) { }
