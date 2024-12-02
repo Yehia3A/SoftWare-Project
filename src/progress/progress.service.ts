@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Progress } from './progress.schema';
-import { CreateProgressDto } from './dto/createProgress.dto';
-import { UpdateProgressDto } from './dto/updateProgress.dto';
+import { CreateProgressDto } from './dto/create-progress.dto';
+import { UpdateProgressDto } from './dto/update-progress.dto';
 
 @Injectable()
 export class ProgressService {

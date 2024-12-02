@@ -1,7 +1,7 @@
 import { Controller, Post, Patch, Get, Param, Body, Delete } from '@nestjs/common';
 import { ProgressService } from './progress.service';
-import { CreateProgressDto } from './dto/createProgress.dto';
-import { UpdateProgressDto } from './dto/updateProgress.dto';
+import { CreateProgressDto } from './dto/create-progress.dto';
+import { UpdateProgressDto } from './dto/update-progress.dto';
 
 @Controller('progress')
 export class ProgressController {
