@@ -12,4 +12,3 @@ import { Progress, ProgressSchema } from './progress.schema'; // Import your Pro
   controllers: [ProgressController],
 })
 export class ProgressesModule {}
- 

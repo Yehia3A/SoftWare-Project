@@ -23,22 +23,30 @@ export class CoursesService {
     // Retrieve a single course by ID
     async getCourseById(courseId: string): Promise<Course> {
         const course = await this.courseModel.findById(courseId).exec();
-        if (!course) throw new NotFoundException('Course not found');
+        if (!course) {
+            throw new NotFoundException(`Course with ID: ${courseId} not found`);
+        }
         return course;
     }
 
     // Update a course
     async updateCourse(courseId: string, updateCourseDto: UpdateCourseDto): Promise<Course> {
+        const existingCourse = await this.courseModel.findById(courseId).exec();
+        if (!existingCourse) {
+            throw new NotFoundException(`Course with ID: ${courseId} not found`);
+        }
         const updatedCourse = await this.courseModel
             .findByIdAndUpdate(courseId, updateCourseDto, { new: true })
             .exec();
-        if (!updatedCourse) throw new NotFoundException('Course not found');
         return updatedCourse;
     }
 
     // Delete a course
-    async deleteCourse(courseId: string): Promise<void> {
+    async deleteCourse(courseId: string): Promise<{ message: string }> {
         const result = await this.courseModel.findByIdAndDelete(courseId).exec();
-        if (!result) throw new NotFoundException('Course not found');
+        if (!result) {
+            throw new NotFoundException(`Course with ID: ${courseId} not found`);
+        }
+        return { message: `Course with ID: ${courseId} successfully deleted` };
     }
 }

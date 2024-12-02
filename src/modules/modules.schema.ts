@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { Course } from '../courses/courses.schema'; // Reference the Course schema for the relationship
+import { Course } from '../courses/courses.schema';
 
-// Define the Module type and document
+
 export type ModuleDocument = HydratedDocument<Module>;
 
 @Schema({ timestamps: true })
@@ -11,16 +11,18 @@ export class Module {
   course_id: Types.ObjectId;
 
   @Prop({ required: true })
-  title: string; // Title of the module
+  title: string;
 
   @Prop({ required: true })
-  content: string; // Content of the module
+  content: string;
 
   @Prop({ type: [String], default: [] })
   resources: string[]; // Array of URLs to additional resources
 
   @Prop({ default: Date.now })
   created_at: Date; // Custom creation date if needed (timestamps already handled by mongoose)
+
+  resources: string[];
 }
 
 // Create and export the schema for use
