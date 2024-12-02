@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Get, Patch, UseGuards, Request, Res } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from 'src/auth/auth/jwt-auth.guard'; // Import JwtAuthGuard
-import { CreateUserDto } from './dto/create-user.dto';
+import {  RegisterUserDto } from './dto/RegisterUserDto';
 import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
 import { LoginUserDto } from './dto/user-login.dto';
 import { Response } from 'express';  // Import Response from express
@@ -10,11 +10,12 @@ import { Response } from 'express';  // Import Response from express
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // Register a new user
+
   @Post('register')
-  async register(@Body() createUserDto: CreateUserDto) {
+  async register(@Body() createUserDto: RegisterUserDto) {
     return this.usersService.register(createUserDto);
   }
+
 
   // Login a user and generate a JWT token, storing it in the cookie
   @Post('login')

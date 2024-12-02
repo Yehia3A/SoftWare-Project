@@ -1,7 +1,6 @@
-// jwt-auth.guard.ts
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
@@ -22,7 +21,16 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       // Verify the token and decode it
       const decoded = await this.jwtService.verifyAsync(token);
       request.user = decoded; // Attach the decoded user info to the request object
+
+      // Check if the user has the instructor role
+      if (request.user.role !== 'instructor') {
+        throw new ForbiddenException('You do not have permission to access this resource');
+      }
+
     } catch (error) {
+      if (error instanceof UnauthorizedException || error instanceof ForbiddenException) {
+        throw error;
+      }
       throw new UnauthorizedException('Token is invalid');
     }
 

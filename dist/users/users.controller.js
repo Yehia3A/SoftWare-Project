@@ -16,7 +16,7 @@ exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
 const jwt_auth_guard_1 = require("../auth/auth/jwt-auth.guard");
-const create_user_dto_1 = require("./dto/create-user.dto");
+const RegisterUserDto_1 = require("./dto/RegisterUserDto");
 const update_user_profile_dto_1 = require("./dto/update-user-profile.dto");
 const user_login_dto_1 = require("./dto/user-login.dto");
 let UsersController = class UsersController {
@@ -42,7 +42,7 @@ __decorate([
     (0, common_1.Post)('register'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
+    __metadata("design:paramtypes", [RegisterUserDto_1.RegisterUserDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "register", null);
 __decorate([
