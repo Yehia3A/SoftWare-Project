@@ -30,28 +30,43 @@ let UsersService = class UsersService {
         if (existingUser) {
             throw new common_1.ConflictException('Email is already registered');
         }
-        const password_hash = await bcrypt.hash(password, 10);
+        if (!password) {
+            throw new common_1.InternalServerErrorException('Password is required');
+        }
+        const saltRounds = 10;
+        const password_hash = await bcrypt.hash(password, saltRounds);
         const newUser = new this.userModel({ ...otherDetails, email, password_hash });
         return newUser.save();
     }
     async login(loginUserDto, res) {
         const { email, password } = loginUserDto;
-        const user = await this.userModel.findOne({ email });
-        if (!user) {
-            throw new common_1.UnauthorizedException('User not found, Please Register first!');
+        try {
+            const user = await this.userModel.findOne({ email });
+            if (!user) {
+                throw new common_1.UnauthorizedException('User not found, please register first!');
+            }
+            const passwordMatches = await bcrypt.compare(password, user.password_hash);
+            if (!passwordMatches) {
+                throw new common_1.UnauthorizedException('Email or password is incorrect!');
+            }
+            const payload = { _id: user._id, role: user.role };
+            const accessToken = this.jwtService.sign(payload);
+            res.cookie('accessToken', accessToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 3600 * 1000,
+            });
+            return res.json({ message: 'Login successful', accessToken });
         }
-        const passwordMatches = await bcrypt.compare(password, user.password_hash);
-        if (!passwordMatches) {
-            throw new common_1.UnauthorizedException('Email or password is incorrect!');
+        catch (error) {
+            if (error instanceof common_1.UnauthorizedException) {
+                throw error;
+            }
+            else {
+                console.error('Unexpected error during login:', error);
+                throw new common_1.InternalServerErrorException('An unexpected error occurred during login.');
+            }
         }
-        const payload = { _id: user._id, role: user.role };
-        const accessToken = this.jwtService.sign(payload);
-        res.cookie('accessToken', accessToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge: 3600 * 1000,
-        });
-        return res.json({ message: 'Login successful', accessToken });
     }
     async getProfile(userId) {
         const user = await this.userModel.findById(userId).select('-password_hash');
