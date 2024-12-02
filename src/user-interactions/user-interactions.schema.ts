@@ -14,4 +14,9 @@ export class UserInteraction extends Document {
     @Prop({ required: true })
     last_accessed: Date;
 };
+
+// This is the document type to be used in your service.
+export type UserInteractionDocument = UserInteraction & Document;
+
+// Generate the schema using SchemaFactory.
 export const UserInteractionSchema = SchemaFactory.createForClass(UserInteraction);
