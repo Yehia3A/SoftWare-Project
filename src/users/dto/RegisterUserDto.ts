@@ -1,8 +1,20 @@
+import { IsEmail, IsString, MinLength, IsOptional, IsUrl } from 'class-validator';
+
 export class RegisterUserDto {
-    name: string;
-    email: string;
-    password: string;
-    role: string;
-    profilePictureUrl?: string;
-  }
-  
+  @IsString()
+  name: string;
+
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @MinLength(6)
+  password: string;
+
+  @IsString()
+  role: string;
+
+  @IsOptional()
+  @IsUrl()
+  profilePictureUrl?: string;
+}

@@ -18,9 +18,15 @@ const user_module_1 = require("./users/user.module");
 const courses_module_1 = require("./courses/courses.module");
 const modules_module_1 = require("./modules/modules.module");
 const progress_module_1 = require("./progress/progress.module");
-const auth_module_1 = require("./auth/auth/auth.module");
 const config_1 = require("@nestjs/config");
+const auth_module_1 = require("./auth/auth.module");
+const auth_middleware_1 = require("./auth/auth.middleware");
 let AppModule = class AppModule {
+    configure(consumer) {
+        consumer
+            .apply(auth_middleware_1.AuthMiddleware)
+            .forRoutes({ path: '*', method: common_1.RequestMethod.ALL });
+    }
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
