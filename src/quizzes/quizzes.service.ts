@@ -1,24 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Quizzes } from './quizzes.schema';
+import { Quizzes, QuizzesDocument } from './quizzes.schema';
 import { SubmitAnswerDto } from './dto/submit-answer.dto';
 
 @Injectable()
 export class QuizzesService {
   constructor(
-    @InjectModel(Quizzes.name) private quizzesModel: Model<Quizzes>,
+    @InjectModel(Quizzes.name) private quizzesModel: Model<QuizzesDocument>,
   ) {}
 
   async startQuiz(moduleId: string) {
-    // Fetch a quiz by module ID
-    const quiz = await this.quizzesModel.findOne({ module_id: new Types.ObjectId(moduleId) }).exec();
+    const quiz = await this.quizzesModel.findOne({ moudule_id: new Types.ObjectId(moduleId) }).exec();
 
     if (!quiz || !quiz.questions.length) {
       throw new Error('No questions available for this module.');
     }
 
-    // Return the first question to start the quiz
     return {
       question: quiz.questions[0],
       message: 'Quiz started!',
@@ -26,25 +24,23 @@ export class QuizzesService {
   }
 
   async submitAnswer(submitAnswerDto: SubmitAnswerDto) {
-    const { questionId, answer, attemptId } = submitAnswerDto;
+    const { questionId, answer } = submitAnswerDto;
 
-    // Simulate fetching the question (in real scenarios, you can normalize data further)
-    const quiz = await this.quizzesModel.findOne({ 'questions._id': questionId }).exec();
+    const quiz = await this.quizzesModel.findOne({ 'questions._id': new Types.ObjectId(questionId) }).exec();
     if (!quiz) {
       throw new Error('Question not found.');
     }
 
-    const question = quiz.questions.find((q: any) => q._id.equals(questionId));
+    const question = quiz.questions.find((q: any) => q._id.equals(new Types.ObjectId(questionId)));
     const isCorrect = question.correctAnswer === answer;
 
-    // Determine next question (for adaptive behavior)
-    const currentIndex = quiz.questions.findIndex((q: any) => q._id.equals(questionId));
+    const currentIndex = quiz.questions.findIndex((q: any) => q._id.equals(new Types.ObjectId(questionId)));
     const nextQuestion = quiz.questions[currentIndex + 1];
 
-    // Feedback object
     const feedback = {
       isCorrect,
-      explanation: question.explanation,
+      explanation: question.explanation,  // Provide explanation here
+      correctAnswer: question.correctAnswer,  // Provide correct answer here
     };
 
     return {
@@ -54,9 +50,8 @@ export class QuizzesService {
   }
 
   async getQuizResults(moduleId: string, userId: string) {
-    // Aggregate quiz results for a specific module and user
     const results = await this.quizzesModel.aggregate([
-      { $match: { module_id: new Types.ObjectId(moduleId) } },
+      { $match: { moudule_id: new Types.ObjectId(moduleId) } },
       {
         $lookup: {
           from: 'attempts',
