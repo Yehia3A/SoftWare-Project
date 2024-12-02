@@ -24,6 +24,9 @@ let UsersService = class UsersService {
         this.userModel = userModel;
         this.jwtService = jwtService;
     }
+    async findByEmail(email) {
+        return this.userModel.findOne({ email }).exec();
+    }
     async register(createUserDto) {
         const { email, password, ...otherDetails } = createUserDto;
         const existingUser = await this.userModel.findOne({ email });
@@ -75,14 +78,27 @@ let UsersService = class UsersService {
         }
         return user;
     }
-    async updateProfile(userId, updateUserProfileDto) {
-        const updatedUser = await this.userModel
-            .findByIdAndUpdate(userId, updateUserProfileDto, { new: true })
-            .select('-password_hash');
-        if (!updatedUser) {
-            throw new common_1.UnauthorizedException('User not found');
+    async updateStudentProfile(userId, updateStudentProfileDto) {
+        try {
+            return await this.userModel.findByIdAndUpdate(userId, updateStudentProfileDto, { new: true }).exec();
         }
-        return updatedUser;
+        catch (error) {
+            console.error("Error updating student profile:", error);
+            throw new Error("Failed to update student profile");
+        }
+    }
+    async updateInstructorProfile(userId, updateInstructorProfileDto) {
+        try {
+            const updatedUser = await this.userModel.findByIdAndUpdate(userId, updateInstructorProfileDto, { new: true }).exec();
+            if (!updatedUser) {
+                throw new Error('User not found');
+            }
+            return updatedUser;
+        }
+        catch (error) {
+            console.error(`Error updating instructor profile for userId ${userId}:`, error.message);
+            throw new Error('Failed to update instructor profile');
+        }
     }
 };
 exports.UsersService = UsersService;

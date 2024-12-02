@@ -12,7 +12,6 @@ const mongoose_1 = require("@nestjs/mongoose");
 const jwt_1 = require("@nestjs/jwt");
 const users_controller_1 = require("./users.controller");
 const users_service_1 = require("./users.service");
-const auth_module_1 = require("../auth/auth/auth.module");
 const user_schema_1 = require("./user.schema");
 let UsersModule = class UsersModule {
 };
@@ -25,7 +24,6 @@ exports.UsersModule = UsersModule = __decorate([
                 secret: process.env.JWT_SECRET || 'your-secret-key',
                 signOptions: { expiresIn: '24h' },
             }),
-            (0, common_1.forwardRef)(() => auth_module_1.AuthModule),
         ],
         controllers: [users_controller_1.UsersController],
         providers: [users_service_1.UsersService],

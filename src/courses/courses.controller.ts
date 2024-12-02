@@ -2,13 +2,15 @@ import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nes
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
-import { JwtAuthGuard } from '../auth/auth/jwt-auth.guard'
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorator/roles.decorator';
+import { Role } from 'src/auth/dto/RoleDto';
 @Controller('courses')
+@UseGuards(RolesGuard)
 export class CoursesController {
     constructor(private readonly coursesService: CoursesService) { }
-
-    @UseGuards(JwtAuthGuard)
-    @Post()
+    @Roles(Role.Instructor)
+    @Post('create-course')
     createCourse(@Body() createCourseDto: CreateCourseDto) {
         return this.coursesService.createCourse(createCourseDto);
     }
@@ -18,20 +20,22 @@ export class CoursesController {
         return this.coursesService.getAllCourses();
     }
 
-    @Get(':id')
+    @Get('name')
     getCourseById(@Param('id') courseId: string) {
         return this.coursesService.getCourseById(courseId);
     }
-    @UseGuards(JwtAuthGuard)
-    @Put(':id')
+
+    @Roles(Role.Instructor)
+    @Put('name')
     updateCourse(
-        @Param('id') courseId: string,
+        @Param('name') courseId: string,
         @Body() updateCourseDto: UpdateCourseDto,
     ) {
         return this.coursesService.updateCourse(courseId, updateCourseDto);
     }
-    @UseGuards(JwtAuthGuard)
-    @Delete(':id')
+
+    @Roles(Role.Instructor)
+    @Delete('name')
     deleteCourse(@Param('id') courseId: string) {
         return this.coursesService.deleteCourse(courseId);
     }
