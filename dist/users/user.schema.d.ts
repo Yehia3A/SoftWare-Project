@@ -1,3 +1,4 @@
+import { Document } from "mongoose";
 export type UserDocument = User & Document;
 export declare class User {
     name: string;
@@ -5,12 +6,16 @@ export declare class User {
     password_hash: string;
     role: string;
     profilePictureUrl?: string;
+    learningPreferences?: string[];
+    subjectsOfInterest?: string[];
+    expertise?: string[];
+    teachingInterests?: string[];
 }
-export declare const UserSchema: import("mongoose").Schema<User, import("mongoose").Model<User, any, any, any, import("mongoose").Document<unknown, any, User> & User & {
+export declare const UserSchema: import("mongoose").Schema<User, import("mongoose").Model<User, any, any, any, Document<unknown, any, User> & User & {
     _id: import("mongoose").Types.ObjectId;
 } & {
     __v: number;
-}, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, User, import("mongoose").Document<unknown, {}, import("mongoose").FlatRecord<User>> & import("mongoose").FlatRecord<User> & {
+}, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, User, Document<unknown, {}, import("mongoose").FlatRecord<User>> & import("mongoose").FlatRecord<User> & {
     _id: import("mongoose").Types.ObjectId;
 } & {
     __v: number;

@@ -1,29 +1,29 @@
-import { Controller, Post, Body, Get, Patch, UseGuards, Request, Res } from '@nestjs/common';
+import { Controller, Post, Body, Get, Patch, UseGuards, Request, Res, Param, Put } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { JwtAuthGuard } from 'src/auth/auth/jwt-auth.guard'; // Import JwtAuthGuard
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserProfileDto } from './dto/update-user-profile.dto';
+import { RegisterUserDto } from './dto/RegisterUserDto';
+import { UpdateStudentProfileDto } from './dto/update-student-profile.dto';
 import { LoginUserDto } from './dto/user-login.dto';
-import { Response } from 'express';  // Import Response from express
+import { Response } from 'express';
+import { Roles } from 'src/auth/decorator/roles.decorator';
+import { Role } from 'src/auth/dto/RoleDto';
+import { UpdateInstructorProfileDto } from './dto/update-instructor-profileDto';
+import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // Register a new user
   @Post('register')
-  async register(@Body() createUserDto: CreateUserDto) {
+  async register(@Body() createUserDto: RegisterUserDto) {
     return this.usersService.register(createUserDto);
   }
 
-  // Login a user and generate a JWT token, storing it in the cookie
   @Post('login')
   async login(@Body() loginUserDto: LoginUserDto, @Res() res: Response) {
-    // Pass Response object to set the cookie
     return await this.usersService.login(loginUserDto, res);
   }
 
-  // Use JwtAuthGuard to protect the profile routes
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@Request() req) {
@@ -31,9 +31,17 @@ export class UsersController {
     return this.usersService.getProfile(req.user._id); // Use the _id from req.user
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Patch('profile')
-  async updateProfile(@Request() req, @Body() updateUserProfileDto: UpdateUserProfileDto) {
-    return this.usersService.updateProfile(req.user._id, updateUserProfileDto); // Use the _id from req.user
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.student)
+  @Put(':id/student-profile')
+  updateStudentProfile(@Param('id') userId: string, @Body() updateStudentProfileDto: UpdateStudentProfileDto) {
+    return this.usersService.updateStudentProfile(userId, updateStudentProfileDto);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Instructor)
+  @Put(':id/instructor-profile')
+  updateInstructorProfile(@Param('id') userId: string, @Body() updateInstructorProfileDto: UpdateInstructorProfileDto) {
+    return this.usersService.updateInstructorProfile(userId, updateInstructorProfileDto);
   }
 }

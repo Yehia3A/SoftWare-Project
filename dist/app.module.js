@@ -18,23 +18,29 @@ const user_module_1 = require("./users/user.module");
 const courses_module_1 = require("./courses/courses.module");
 const modules_module_1 = require("./modules/modules.module");
 const progress_module_1 = require("./progress/progress.module");
-const auth_module_1 = require("./auth/auth/auth.module");
 const config_1 = require("@nestjs/config");
+const auth_module_1 = require("./auth/auth.module");
+const auth_middleware_1 = require("./auth/auth.middleware");
 let AppModule = class AppModule {
+    configure(consumer) {
+        consumer
+            .apply(auth_middleware_1.AuthMiddleware)
+            .forRoutes({ path: '*', method: common_1.RequestMethod.ALL });
+    }
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot(),
-            mongoose_1.MongooseModule.forRoot(process.env.MONGODB_URI),
+            mongoose_1.MongooseModule.forRoot("mongodb+srv://elearning:elearning123@cluster0.3ylmz.mongodb.net/E-learning"),
             quizzes_module_1.QuizzesModule,
             user_interactions_module_1.UserInteractionsModule,
             recommendations_module_1.RecommendationsModule,
             user_module_1.UsersModule,
             courses_module_1.CoursesModule,
             modules_module_1.ModulesModule,
-            progress_module_1.progressesModule,
+            progress_module_1.ProgressesModule,
             auth_module_1.AuthModule
         ],
         controllers: [app_controller_1.AppController],
