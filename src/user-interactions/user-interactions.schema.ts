@@ -5,6 +5,9 @@ import { Course } from '../courses/courses.schema'; // Import Course schema
 
 @Schema({ timestamps: true })
 export class UserInteraction extends Document {
+    @Prop({ type: Types.ObjectId, ref: User.name, required: true })
+    user_id: Types.ObjectId;
+    
     @Prop({ required: true })
     score: Number;
 

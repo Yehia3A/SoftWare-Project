@@ -1,20 +1,19 @@
-import { IsNotEmpty, IsString, IsArray, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsArray } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreateModuleDto {
-    @IsNotEmpty()
-    @IsString()
-    course_id: string; // Updated to match the schema field name
+  @IsNotEmpty()
+  course_id: Types.ObjectId;
 
-    @IsNotEmpty()
-    @IsString()
-    title: string;
+  @IsString()
+  @IsNotEmpty()
+  title: string;
 
-    @IsNotEmpty()
-    @IsString()
-    content: string;
+  @IsString()
+  @IsNotEmpty()
+  content: string;
 
-    @IsOptional()
-    @IsArray()
-    @IsString({ each: true }) // Validate each array element
-    resources: string[];
+  @IsArray()
+  @IsString({ each: true })
+  resources?: string[];
 }
