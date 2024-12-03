@@ -7,40 +7,33 @@ import { UpdateModuleDto } from './dto/update-module.dto';
 
 @Injectable()
 export class ModulesService {
-    constructor(
-        @InjectModel(Module.name) private moduleModel: Model<ModuleDocument>,
-    ) { }
+  constructor(
+    @InjectModel(Module.name) private moduleModel: Model<ModuleDocument>,
+  ) {}
 
-    async createModule(createModuleDto: CreateModuleDto): Promise<Module> {
-        const newModule = new this.moduleModel(createModuleDto);
-        return newModule.save();
-    }
+  async create(createModuleDto: CreateModuleDto): Promise<Module> {
+    const createdModule = new this.moduleModel(createModuleDto);
+    return createdModule.save();
+  }
 
-    async getModulesByCourseId(course_id: string): Promise<Module[]> {
-        const modules = await this.moduleModel.find({ course_id }).exec();
-        if (!modules.length) {
-            throw new NotFoundException(
-                `No modules found for the course ID: ${course_id}`,
-            );
-        }
-        return modules;
-    }
+  async findOne(id: string): Promise<Module> {
+    const module = await this.moduleModel.findById(id).populate('course_id');
+    if (!module) throw new NotFoundException('Module not found');
+    return module;
+  }
 
-    async updateModule(id: string, updateModuleDto: UpdateModuleDto): Promise<Module> {
-        const updatedModule = await this.moduleModel
-            .findByIdAndUpdate(id, updateModuleDto, { new: true })
-            .exec();
-        if (!updatedModule) {
-            throw new NotFoundException(`Module with ID: ${id} not found`);
-        }
-        return updatedModule;
-    }
+  async update(id: string, updateModuleDto: UpdateModuleDto): Promise<Module> {
+    const updatedModule = await this.moduleModel.findByIdAndUpdate(
+      id,
+      updateModuleDto,
+      { new: true },
+    );
+    if (!updatedModule) throw new NotFoundException('Module not found');
+    return updatedModule;
+  }
 
-    async deleteModule(id: string): Promise<{ message: string }> {
-        const result = await this.moduleModel.findByIdAndDelete(id).exec();
-        if (!result) {
-            throw new NotFoundException(`Module with ID: ${id} not found`);
-        }
-        return { message: `Module with ID: ${id} successfully deleted` };
-    }
+  async remove(id: string): Promise<void> {
+    const result = await this.moduleModel.findByIdAndDelete(id);
+    if (!result) throw new NotFoundException('Module not found');
+  }
 }

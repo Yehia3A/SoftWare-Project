@@ -1,32 +1,29 @@
-import { Controller, Post, Get, Delete, Put, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch } from '@nestjs/common';
 import { ModulesService } from './modules.service';
 import { CreateModuleDto } from './dto/create-module.dto';
 import { UpdateModuleDto } from './dto/update-module.dto';
 
 @Controller('modules')
 export class ModulesController {
-    constructor(private readonly modulesService: ModulesService) { }
+  constructor(private readonly modulesService: ModulesService) {}
 
-    @Post()
-    async createModule(@Body() createModuleDto: CreateModuleDto) {
-        return await this.modulesService.createModule(createModuleDto);
-    }
+  @Post()
+  create(@Body() createModuleDto: CreateModuleDto) {
+    return this.modulesService.create(createModuleDto);
+  }
 
-    @Get(':course_id')
-    async getModulesByCourseId(@Param('course_id') course_id: string) {
-        return await this.modulesService.getModulesByCourseId(course_id);
-    }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.modulesService.findOne(id);
+  }
 
-    @Put(':id')
-    async updateModule(
-        @Param('id') id: string,
-        @Body() updateModuleDto: UpdateModuleDto,
-    ) {
-        return await this.modulesService.updateModule(id, updateModuleDto);
-    }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateModuleDto: UpdateModuleDto) {
+    return this.modulesService.update(id, updateModuleDto);
+  }
 
-    @Delete(':id')
-    async deleteModule(@Param('id') id: string) {
-        return await this.modulesService.deleteModule(id);
-    }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.modulesService.remove(id);
+  }
 }
