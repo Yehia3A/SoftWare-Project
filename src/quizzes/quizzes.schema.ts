@@ -1,18 +1,37 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document , Types } from 'mongoose';
-import { Module } from '../modules/modules.schema'; // Import Module schema
+import { HydratedDocument } from 'mongoose';
 
-@Schema({ timestamps: true })
-export class Quizzes extends Document {
+export type QuizDocument = HydratedDocument<Quiz>;
 
+@Schema({ timestamps: true }) // Automatically manages `createdAt` and `updatedAt`
+export class Quiz {
+  @Prop({ required: true })
+  quiz_id: string; // Unique identifier for the quiz
 
-    @Prop({ type: Types.ObjectId, ref: 'Module', required: true })
-    moudule_id: Types.ObjectId;
+  @Prop({ required: true })
+  module_id: string; // Associated module ID
 
-    @Prop({ type: [Object], default: [] })
-    questions: Array<Object>;
+  @Prop({
+    type: [
+      {
+        question_id: { type: String, required: true },
+        text: { type: String, required: true }, // Question text
+        options: { type: [String], required: true }, // Multiple-choice options
+        correctAnswer: { type: String, required: true }, // Correct option
+        explanation: { type: String, required: true }, // Explanation for feedback
+        difficulty: { type: String, required: true, enum: ['Easy', 'Medium', 'Hard'] }, // Difficulty level
+      },
+    ],
+    required: true,
+  })
+  questions: Array<{
+    question_id: string;
+    text: string;
+    options: string[];
+    correctAnswer: string;
+    explanation: string;
+    difficulty: 'Easy' | 'Medium' | 'Hard';
+  }>;
+}
 
-    @Prop({ default: Date.now })
-    created_at: Date;
-};
-export const QuizzesSchema = SchemaFactory.createForClass(Quizzes);
+export const QuizSchema = SchemaFactory.createForClass(Quiz);

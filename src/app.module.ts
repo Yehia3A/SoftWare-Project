@@ -11,6 +11,8 @@ import { ModulesModule } from './modules/modules.module';
 import { ProgressesModule } from './progress/progress.module';
 import { AuthModule } from './auth/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { ResponseService } from './response/response.service';
+import { ResponseController } from './response/response.controller';
 
 @Module({
   imports: [
@@ -25,7 +27,7 @@ import { ConfigModule } from '@nestjs/config';
     ProgressesModule,
     AuthModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, ResponseController],
+  providers: [AppService, ResponseService],
 })
 export class AppModule { }

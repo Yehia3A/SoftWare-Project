@@ -1,23 +1,44 @@
-import { Controller, Get, Post, Body, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Delete,
+} from '@nestjs/common';
 import { QuizzesService } from './quizzes.service';
-import { SubmitAnswerDto } from './dto/submit-answer.dto';
 
 @Controller('quizzes')
 export class QuizzesController {
   constructor(private readonly quizzesService: QuizzesService) {}
 
-  @Get('start')
-  async startQuiz(@Query('moduleId') moduleId: string) {
-    return this.quizzesService.startQuiz(moduleId);
+  // Endpoint to create a new quiz
+  @Post('create')
+  async createQuiz(
+    @Body('moduleId') moduleId: string,
+    @Body('questions') questions: any[],
+  ) {
+    return this.quizzesService.createQuiz(moduleId, questions);
   }
 
+  // Endpoint to get quiz by ID
+  @Get(':quizId')
+  async getQuizById(@Param('quizId') quizId: string) {
+    return this.quizzesService.getQuizById(quizId);
+  }
+
+  // Endpoint to submit a response
   @Post('submit')
-  async submitAnswer(@Body() submitAnswerDto: SubmitAnswerDto) {
-    return this.quizzesService.submitAnswer(submitAnswerDto);
+  async submitResponse(
+    @Body('userId') userId: string,
+    @Body('quizId') quizId: string,
+    @Body('answers') answers: { questionId: string; answer: string }[],
+  ) {
+    return this.quizzesService.submitResponse(userId, quizId, answers);
   }
-
-  @Get('results')
-  async getQuizResults(@Query('moduleId') moduleId: string, @Query('userId') userId: string) {
-    return this.quizzesService.getQuizResults(moduleId, userId);
+  
+  @Delete(':quizId')
+  async deleteQuiz(@Param('quizId') quizId: string) {
+    return this.quizzesService.deleteQuiz(quizId);
   }
 }

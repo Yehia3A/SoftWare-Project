@@ -1,74 +1,94 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { Quizzes } from './quizzes.schema';
-import { SubmitAnswerDto } from './dto/submit-answer.dto';
+import { Model } from 'mongoose';
+import { Quiz, QuizDocument } from './quizzes.schema';
+import { Response, ResponseDocument } from '../response/response.schema';
+
 
 @Injectable()
 export class QuizzesService {
   constructor(
-    @InjectModel(Quizzes.name) private quizzesModel: Model<Quizzes>,
+    @InjectModel(Quiz.name) private quizModel: Model<QuizDocument>,
+    @InjectModel(Response.name) private responseModel: Model<ResponseDocument>,
   ) {}
-
-  async startQuiz(moduleId: string) {
-    // Fetch a quiz by module ID
-    const quiz = await this.quizzesModel.findOne({ module_id: new Types.ObjectId(moduleId) }).exec();
-
-    if (!quiz || !quiz.questions.length) {
-      throw new Error('No questions available for this module.');
-    }
-
-    // Return the first question to start the quiz
-    return {
-      question: quiz.questions[0],
-      message: 'Quiz started!',
-    };
-  }
-
-  async submitAnswer(submitAnswerDto: SubmitAnswerDto) {
-    const { questionId, answer, attemptId } = submitAnswerDto;
-
-    // Simulate fetching the question (in real scenarios, you can normalize data further)
-    const quiz = await this.quizzesModel.findOne({ 'questions._id': questionId }).exec();
+  
+  async deleteQuiz(quizId: string): Promise<{ message: string }> {
+    const quiz = await this.quizModel.findById(quizId);
     if (!quiz) {
-      throw new Error('Question not found.');
+      throw new NotFoundException(`Quiz with ID ${quizId} not found`);
     }
 
-    const question = quiz.questions.find((q: any) => q._id.equals(questionId));
-    const isCorrect = question.correctAnswer === answer;
+    await this.quizModel.findByIdAndDelete(quizId);
+    return { message: `Quiz with ID ${quizId} has been deleted successfully.` };
+  }
 
-    // Determine next question (for adaptive behavior)
-    const currentIndex = quiz.questions.findIndex((q: any) => q._id.equals(questionId));
-    const nextQuestion = quiz.questions[currentIndex + 1];
+  // Create a new quiz
+  async createQuiz(moduleId: string, questions: any[]): Promise<Quiz> {
+    const newQuiz = new this.quizModel({
+      moduleId,
+      questions,
+    });
+    return newQuiz.save();
+  }
 
-    // Feedback object
-    const feedback = {
-      isCorrect,
-      explanation: question.explanation,
-    };
+  // Fetch a quiz by its ID
+  async getQuizById(quizId: string): Promise<Quiz> {
+    const quiz = await this.quizModel.findById(quizId).exec();
+    if (!quiz) {
+      throw new NotFoundException('Quiz not found');
+    }
+    return quiz;
+  }
+
+  // Submit quiz response and calculate score
+  async submitResponse(
+    userId: string,
+    quizId: string,
+    answers: { questionId: string; answer: string }[],
+  ): Promise<any> {
+    const quiz = await this.getQuizById(quizId);
+    let score = 0;
+
+    const evaluatedAnswers = answers.map((userAnswer) => {
+      const question = quiz.questions.find(
+        (q: any) => q._id.toString() === userAnswer.questionId,
+      );
+      const isCorrect = question.correctAnswer === userAnswer.answer;
+
+      if (isCorrect) score++;
+
+      return {
+        questionId: userAnswer.questionId,
+        isCorrect,
+        correctAnswer: question.correctAnswer,
+      };
+    });
+
+    // Save response
+    const newResponse = new this.responseModel({
+      userId,
+      quizId,
+      answers: evaluatedAnswers,
+      score,
+    });
+    await newResponse.save();
 
     return {
-      feedback,
-      nextQuestion,
+      score,
+      totalQuestions: quiz.questions.length,
+      evaluatedAnswers,
     };
   }
 
-  async getQuizResults(moduleId: string, userId: string) {
-    // Aggregate quiz results for a specific module and user
-    const results = await this.quizzesModel.aggregate([
-      { $match: { module_id: new Types.ObjectId(moduleId) } },
-      {
-        $lookup: {
-          from: 'attempts',
-          localField: '_id',
-          foreignField: 'quiz_id',
-          as: 'attempts',
-        },
-      },
-      { $unwind: '$attempts' },
-      { $match: { 'attempts.user_id': new Types.ObjectId(userId) } },
-    ]);
+  // Adaptive difficulty logic
+  determineNextQuestion(
+    quiz: QuizDocument,
+    currentQuestionId: string,
+  ): any | null {
+    const currentIndex = quiz.questions.findIndex(
+      (q: any) => q._id.toString() === currentQuestionId,
+    );
 
-    return results;
+    return quiz.questions[currentIndex + 1] || null;
   }
 }

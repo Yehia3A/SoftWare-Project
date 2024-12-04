@@ -20,6 +20,8 @@ const modules_module_1 = require("./modules/modules.module");
 const progress_module_1 = require("./progress/progress.module");
 const auth_module_1 = require("./auth/auth/auth.module");
 const config_1 = require("@nestjs/config");
+const response_service_1 = require("./response/response.service");
+const response_controller_1 = require("./response/response.controller");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -37,8 +39,8 @@ exports.AppModule = AppModule = __decorate([
             progress_module_1.ProgressesModule,
             auth_module_1.AuthModule
         ],
-        controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        controllers: [app_controller_1.AppController, response_controller_1.ResponseController],
+        providers: [app_service_1.AppService, response_service_1.ResponseService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map
