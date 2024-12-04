@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class ModulesService {}
+=======
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -37,3 +43,4 @@ export class ModulesService {
     if (!result) throw new NotFoundException('Module not found');
   }
 }
+>>>>>>> 2390a8ead770db3d57cf8bb675a3eb4376aec2c3

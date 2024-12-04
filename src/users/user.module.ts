@@ -3,8 +3,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+
 import { AuthModule } from 'src/auth/auth/auth.module';  // Correct path to AuthModule
 import { User, UserSchema } from './user.schema';
+
 
 @Module({
   imports: [
@@ -13,7 +15,7 @@ import { User, UserSchema } from './user.schema';
       secret: process.env.JWT_SECRET || 'your-secret-key',  // Use environment variable for the secret
       signOptions: { expiresIn: '24h' },
     }),
-    forwardRef(() => AuthModule),  // Using forwardRef here too to avoid circular dependency
+    // Using forwardRef here too to avoid circular dependency
   ],
   controllers: [UsersController],
   providers: [UsersService],
