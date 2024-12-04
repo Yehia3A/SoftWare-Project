@@ -33,7 +33,7 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot(),
-            mongoose_1.MongooseModule.forRoot("mongodb+srv://elearning:elearning123@cluster0.3ylmz.mongodb.net/E-learning"),
+            mongoose_1.MongooseModule.forRoot("mongodb+srv://admin:admin123@cluster0.3ylmz.mongodb.net/E-learning"),
             quizzes_module_1.QuizzesModule,
             user_interactions_module_1.UserInteractionsModule,
             recommendations_module_1.RecommendationsModule,

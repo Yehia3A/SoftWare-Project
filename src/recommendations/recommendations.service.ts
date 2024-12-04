@@ -5,8 +5,6 @@ import { Recommendation } from './recommendations.schema';
 import { User } from '../users/user.schema';
 import { Course } from '../courses/courses.schema';
 import { Module } from '../modules/modules.schema';
-import { CreateRecommendationDto } from './dto/create-recommnedations.dto.ts';
-import { UpdateRecommendation } from './dto/update-recommnedations.dto.ts';
 
 @Injectable()
 export class RecommendationsService {
@@ -17,7 +15,7 @@ export class RecommendationsService {
 
   // Create or update a recommendation for a user
   async upsertRecommendation(
-    userId: Types.ObjectId,
+    userId: Types.ObjectId, 
     recommendedCourses: Types.ObjectId[],
     recommendedModules: Types.ObjectId[] = [],
     keywords: string[] = [],

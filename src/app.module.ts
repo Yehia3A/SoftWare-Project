@@ -16,7 +16,7 @@ import { AuthMiddleware } from './auth/auth.middleware';
 @Module({
   imports: [
     ConfigModule.forRoot(),  // Load environment variables from .env
-    MongooseModule.forRoot("mongodb+srv://elearning:elearning123@cluster0.3ylmz.mongodb.net/E-learning"),  
+    MongooseModule.forRoot("mongodb+srv://admin:admin123@cluster0.3ylmz.mongodb.net/E-learning"),  
     QuizzesModule,
     UserInteractionsModule,
     RecommendationsModule,
