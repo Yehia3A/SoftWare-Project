@@ -1,32 +1,38 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
 
-@Schema({ timestamps: true })
-export class Quizzes extends Document {
-    @Prop({ type: Types.ObjectId, ref: 'Module', required: true })
-    moudule_id: Types.ObjectId;
+import { HydratedDocument } from 'mongoose';
 
-    @Prop({
-        type: [{
-            _id: { type: Types.ObjectId, auto: true },
-            question: String,
-            options: [String],
-            correctAnswer: String,  // Add correctAnswer field
-            explanation: String,    // Add explanation field
-        }],
-        default: []
-    })
-    questions: Array<{
-        _id: Types.ObjectId;
-        question: string;
-        options: string[];
-        correctAnswer: string;
-        explanation: string;
-    }>;
+export type QuizDocument = HydratedDocument<Quiz>;
 
-    @Prop({ default: Date.now })
-    created_at: Date;
+@Schema({ timestamps: true }) // Automatically manages `createdAt` and `updatedAt`
+export class Quiz {
+  @Prop({ required: true })
+  quiz_id: string; // Unique identifier for the quiz
+
+  @Prop({ required: true })
+  module_id: string; // Associated module ID
+
+  @Prop({
+    type: [
+      {
+        question_id: { type: String, required: true },
+        text: { type: String, required: true }, // Question text
+        options: { type: [String], required: true }, // Multiple-choice options
+        correctAnswer: { type: String, required: true }, // Correct option
+        explanation: { type: String, required: true }, // Explanation for feedback
+        difficulty: { type: String, required: true, enum: ['Easy', 'Medium', 'Hard'] }, // Difficulty level
+      },
+    ],
+    required: true,
+  })
+  questions: Array<{
+    question_id: string;
+    text: string;
+    options: string[];
+    correctAnswer: string;
+    explanation: string;
+    difficulty: 'Easy' | 'Medium' | 'Hard';
+  }>;
 }
 
-export type QuizzesDocument = Quizzes & Document;
-export const QuizzesSchema = SchemaFactory.createForClass(Quizzes);
+export const QuizSchema = SchemaFactory.createForClass(Quiz);

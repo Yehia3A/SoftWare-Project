@@ -9,8 +9,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
-const app_controller_1 = require("./app.controller");
-const app_service_1 = require("./app.service");
 const quizzes_module_1 = require("./quizzes/quizzes.module");
 const user_interactions_module_1 = require("./user-interactions/user-interactions.module");
 const recommendations_module_1 = require("./recommendations/recommendations.module");
@@ -19,8 +17,10 @@ const courses_module_1 = require("./courses/courses.module");
 const modules_module_1 = require("./modules/modules.module");
 const progress_module_1 = require("./progress/progress.module");
 const config_1 = require("@nestjs/config");
+const response_module_1 = require("./response/response.module");
 const auth_module_1 = require("./auth/auth.module");
 const auth_middleware_1 = require("./auth/auth.middleware");
+
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -41,10 +41,9 @@ exports.AppModule = AppModule = __decorate([
             courses_module_1.CoursesModule,
             modules_module_1.ModulesModule,
             progress_module_1.ProgressesModule,
+            response_module_1.ResponsesModule,
             auth_module_1.AuthModule
         ],
-        controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

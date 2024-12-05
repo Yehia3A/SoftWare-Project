@@ -1,12 +1,46 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+
+
+import { Quiz  } from './quizzes.schema';
+import { Response } from '../response/response.schema';
+
 import { Model, Types } from 'mongoose';
 import { Quizzes, QuizzesDocument } from './quizzes.schema';
 import { SubmitAnswerDto } from './dto/submit-answer.dto';
 
+
 @Injectable()
 export class QuizzesService {
   constructor(
+
+    @InjectModel(Quiz.name) private quizModel: Model<Quiz>,
+    @InjectModel(Response.name) private responseModel: Model<Response>,
+  ) {}
+  
+  async deleteQuiz(quizId: string): Promise<{ message: string }> {
+    const quiz = await this.quizModel.findById(quizId);
+    if (!quiz) {
+      throw new NotFoundException(`Quiz with ID ${quizId} not found`);
+    }
+
+    await this.quizModel.findByIdAndDelete(quizId);
+    return { message: `Quiz with ID ${quizId} has been deleted successfully.` };
+  }
+
+  // Create a new quiz
+  async createQuiz(moduleId: string, questions: any[]): Promise<Quiz> {
+    const newQuiz = new this.quizModel({
+      moduleId,
+      questions,
+    });
+    return newQuiz.save();
+  }
+drfrf
+  // Fetch a quiz by its ID
+  async getQuizById(quizId: string): Promise<Quiz> {
+    const quiz = await this.quizModel.findById(quizId).exec();
+
     @InjectModel(Quizzes.name) private quizzesModel: Model<QuizzesDocument>,
   ) {}
 
@@ -27,27 +61,62 @@ export class QuizzesService {
     const { questionId, answer } = submitAnswerDto;
 
     const quiz = await this.quizzesModel.findOne({ 'questions._id': new Types.ObjectId(questionId) }).exec();
+
     if (!quiz) {
-      throw new Error('Question not found.');
+      throw new NotFoundException('Quiz not found');
     }
+    return quiz;
+  }
 
-    const question = quiz.questions.find((q: any) => q._id.equals(new Types.ObjectId(questionId)));
-    const isCorrect = question.correctAnswer === answer;
+  // Submit quiz response and calculate score
+  async submitResponse(
+    userId: string,
+    quizId: string,
+    answers: { questionId: string; answer: string }[],
+  ): Promise<any> {
+    const quiz = await this.getQuizById(quizId);
+    let score = 0;
 
-    const currentIndex = quiz.questions.findIndex((q: any) => q._id.equals(new Types.ObjectId(questionId)));
-    const nextQuestion = quiz.questions[currentIndex + 1];
+    const evaluatedAnswers = answers.map((userAnswer) => {
+      const question = quiz.questions.find(
+        (q: any) => q._id.toString() === userAnswer.questionId,
+      );
+      const isCorrect = question.correctAnswer === userAnswer.answer;
 
-    const feedback = {
-      isCorrect,
-      explanation: question.explanation,  // Provide explanation here
-      correctAnswer: question.correctAnswer,  // Provide correct answer here
+      if (isCorrect) score++;
+
+      return {
+        questionId: userAnswer.questionId,
+        isCorrect,
+        correctAnswer: question.correctAnswer,
+      };
+    });
+
+    // Save response
+    const newResponse = new this.responseModel({
+      userId,
+      quizId,
+      answers: evaluatedAnswers,
+      score,
+    });
+    await newResponse.save();
     };
 
     return {
-      feedback,
-      nextQuestion,
+      score,
+      totalQuestions: quiz.questions.length,
+      evaluatedAnswers,
     };
   }
+
+
+  determineNextQuestion(
+    quiz: Quiz,
+    currentQuestionId: string,
+  ): any | null {
+    const currentIndex = quiz.questions.findIndex(
+      (q: any) => q._id.toString() === currentQuestionId,
+    );
 
   async getQuizResults(moduleId: string, userId: string) {
     const results = await this.quizzesModel.aggregate([
@@ -64,6 +133,6 @@ export class QuizzesService {
       { $match: { 'attempts.user_id': new Types.ObjectId(userId) } },
     ]);
 
-    return results;
+    return quiz.questions[currentIndex + 1] || null;
   }
 }

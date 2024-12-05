@@ -1,3 +1,4 @@
+
 import { IsString, IsNotEmpty, IsArray } from 'class-validator';
 import { Types } from 'mongoose';
 
@@ -12,8 +13,10 @@ export class CreateModuleDto {
   @IsString()
   @IsNotEmpty()
   content: string;
-
+  
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   resources?: string[];
+
 }
