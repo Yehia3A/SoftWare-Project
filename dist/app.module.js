@@ -20,7 +20,6 @@ const config_1 = require("@nestjs/config");
 const response_module_1 = require("./response/response.module");
 const auth_module_1 = require("./auth/auth.module");
 const auth_middleware_1 = require("./auth/auth.middleware");
-
 let AppModule = class AppModule {
     configure(consumer) {
         consumer

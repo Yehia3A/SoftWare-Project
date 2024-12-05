@@ -1,23 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-
-
-import { Quiz  } from './quizzes.schema';
-import { Response } from '../response/response.schema';
-
 import { Model, Types } from 'mongoose';
-import { Quizzes, QuizzesDocument } from './quizzes.schema';
-import { SubmitAnswerDto } from './dto/submit-answer.dto';
 
+import { Quiz, QuizDocument } from './quizzes.schema';
+import { Response } from '../response/response.schema';
+import { SubmitAnswerDto } from './dto/submit-answer.dto';
 
 @Injectable()
 export class QuizzesService {
   constructor(
-
-    @InjectModel(Quiz.name) private quizModel: Model<Quiz>,
+    @InjectModel(Quiz.name) private quizModel: Model<QuizDocument>,
     @InjectModel(Response.name) private responseModel: Model<Response>,
   ) {}
-  
+
   async deleteQuiz(quizId: string): Promise<{ message: string }> {
     const quiz = await this.quizModel.findById(quizId);
     if (!quiz) {
@@ -28,7 +23,6 @@ export class QuizzesService {
     return { message: `Quiz with ID ${quizId} has been deleted successfully.` };
   }
 
-  // Create a new quiz
   async createQuiz(moduleId: string, questions: any[]): Promise<Quiz> {
     const newQuiz = new this.quizModel({
       moduleId,
@@ -36,21 +30,20 @@ export class QuizzesService {
     });
     return newQuiz.save();
   }
-drfrf
-  // Fetch a quiz by its ID
+
   async getQuizById(quizId: string): Promise<Quiz> {
     const quiz = await this.quizModel.findById(quizId).exec();
-
-    @InjectModel(Quizzes.name) private quizzesModel: Model<QuizzesDocument>,
-  ) {}
+    if (!quiz) {
+      throw new NotFoundException(`Quiz with ID ${quizId} not found`);
+    }
+    return quiz;
+  }
 
   async startQuiz(moduleId: string) {
-    const quiz = await this.quizzesModel.findOne({ moudule_id: new Types.ObjectId(moduleId) }).exec();
-
+    const quiz = await this.quizModel.findOne({ moduleId: new Types.ObjectId(moduleId) }).exec();
     if (!quiz || !quiz.questions.length) {
-      throw new Error('No questions available for this module.');
+      throw new NotFoundException('No questions available for this module.');
     }
-
     return {
       question: quiz.questions[0],
       message: 'Quiz started!',
@@ -59,16 +52,13 @@ drfrf
 
   async submitAnswer(submitAnswerDto: SubmitAnswerDto) {
     const { questionId, answer } = submitAnswerDto;
-
-    const quiz = await this.quizzesModel.findOne({ 'questions._id': new Types.ObjectId(questionId) }).exec();
-
+    const quiz = await this.quizModel.findOne({ 'questions._id': new Types.ObjectId(questionId) }).exec();
     if (!quiz) {
       throw new NotFoundException('Quiz not found');
     }
     return quiz;
   }
 
-  // Submit quiz response and calculate score
   async submitResponse(
     userId: string,
     quizId: string,
@@ -92,7 +82,6 @@ drfrf
       };
     });
 
-    // Save response
     const newResponse = new this.responseModel({
       userId,
       quizId,
@@ -100,7 +89,6 @@ drfrf
       score,
     });
     await newResponse.save();
-    };
 
     return {
       score,
@@ -109,30 +97,28 @@ drfrf
     };
   }
 
-
-  determineNextQuestion(
-    quiz: Quiz,
-    currentQuestionId: string,
-  ): any | null {
+  determineNextQuestion(quiz: Quiz, currentQuestionId: string): any | null {
     const currentIndex = quiz.questions.findIndex(
       (q: any) => q._id.toString() === currentQuestionId,
     );
+    return quiz.questions[currentIndex + 1] || null;
+  }
 
   async getQuizResults(moduleId: string, userId: string) {
-    const results = await this.quizzesModel.aggregate([
-      { $match: { moudule_id: new Types.ObjectId(moduleId) } },
+    const results = await this.quizModel.aggregate([
+      { $match: { moduleId: new Types.ObjectId(moduleId) } },
       {
         $lookup: {
           from: 'attempts',
           localField: '_id',
-          foreignField: 'quiz_id',
+          foreignField: 'quizId',
           as: 'attempts',
         },
       },
       { $unwind: '$attempts' },
-      { $match: { 'attempts.user_id': new Types.ObjectId(userId) } },
-    ]);
+      { $match: { 'attempts.userId': new Types.ObjectId(userId) } },
+    ]).exec();
 
-    return quiz.questions[currentIndex + 1] || null;
+    return results;
   }
 }

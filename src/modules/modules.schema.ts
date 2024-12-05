@@ -3,10 +3,10 @@ import { HydratedDocument, Types } from 'mongoose';
 import { Course } from '../courses/courses.schema';
 
 
-export type ModuleDocument = HydratedDocument<Module>;
+export type ModulesDocument = HydratedDocument<Modules>;
 
 @Schema({ timestamps: true })
-export class Module {
+export class Modules {
   @Prop({ type: Types.ObjectId, ref: Course.name, required: true })
   course_id: Types.ObjectId;
 
@@ -25,4 +25,4 @@ export class Module {
 }
 
 // Create and export the schema for use
-export const ModuleSchema = SchemaFactory.createForClass(Module);
+export const ModulesSchema = SchemaFactory.createForClass(Modules);

@@ -17,5 +17,3 @@ export class UpdateModuleDto {
   @IsString({ each: true })
   resources?: string[];
 }
-export class UpdateModuleDto extends PartialType(CreateModuleDto) { }
-

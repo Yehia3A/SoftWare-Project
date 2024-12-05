@@ -15,8 +15,8 @@ export class ModulesController {
     }
 
     @Get(':course_id')
-    async getModulesByCourseId(@Param('course_id') course_id: string) {
-        return await this.modulesService.getModulesByCourseId(course_id);
+    async getModuleByCourseId(@Param('course_id') course_id: string) {
+        return await this.modulesService.getModuleByCourseId(course_id);
     }
 
     @Put(':id')
