@@ -9,8 +9,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
-const app_controller_1 = require("./app.controller");
-const app_service_1 = require("./app.service");
 const quizzes_module_1 = require("./quizzes/quizzes.module");
 const user_interactions_module_1 = require("./user-interactions/user-interactions.module");
 const recommendations_module_1 = require("./recommendations/recommendations.module");
@@ -20,8 +18,7 @@ const modules_module_1 = require("./modules/modules.module");
 const progress_module_1 = require("./progress/progress.module");
 const auth_module_1 = require("./auth/auth/auth.module");
 const config_1 = require("@nestjs/config");
-const response_service_1 = require("./response/response.service");
-const response_controller_1 = require("./response/response.controller");
+const response_module_1 = require("./response/response.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -29,7 +26,7 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot(),
-            mongoose_1.MongooseModule.forRoot(process.env.MONGODB_URI),
+            mongoose_1.MongooseModule.forRoot("mongodb+srv://elearning:elearning123@cluster0.3ylmz.mongodb.net/E-learning"),
             quizzes_module_1.QuizzesModule,
             user_interactions_module_1.UserInteractionsModule,
             recommendations_module_1.RecommendationsModule,
@@ -37,10 +34,9 @@ exports.AppModule = AppModule = __decorate([
             courses_module_1.CoursesModule,
             modules_module_1.ModulesModule,
             progress_module_1.ProgressesModule,
+            response_module_1.ResponsesModule,
             auth_module_1.AuthModule
         ],
-        controllers: [app_controller_1.AppController, response_controller_1.ResponseController],
-        providers: [app_service_1.AppService, response_service_1.ResponseService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

@@ -1,15 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Quiz, QuizDocument } from './quizzes.schema';
-import { Response, ResponseDocument } from '../response/response.schema';
+import { Quiz  } from './quizzes.schema';
+import { Response } from '../response/response.schema';
 
 
 @Injectable()
 export class QuizzesService {
   constructor(
-    @InjectModel(Quiz.name) private quizModel: Model<QuizDocument>,
-    @InjectModel(Response.name) private responseModel: Model<ResponseDocument>,
+    @InjectModel(Quiz.name) private quizModel: Model<Quiz>,
+    @InjectModel(Response.name) private responseModel: Model<Response>,
   ) {}
   
   async deleteQuiz(quizId: string): Promise<{ message: string }> {
@@ -30,7 +30,7 @@ export class QuizzesService {
     });
     return newQuiz.save();
   }
-
+drfrf
   // Fetch a quiz by its ID
   async getQuizById(quizId: string): Promise<Quiz> {
     const quiz = await this.quizModel.findById(quizId).exec();
@@ -82,7 +82,7 @@ export class QuizzesService {
 
   // Adaptive difficulty logic
   determineNextQuestion(
-    quiz: QuizDocument,
+    quiz: Quiz,
     currentQuestionId: string,
   ): any | null {
     const currentIndex = quiz.questions.findIndex(

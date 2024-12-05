@@ -11,13 +11,12 @@ import { ModulesModule } from './modules/modules.module';
 import { ProgressesModule } from './progress/progress.module';
 import { AuthModule } from './auth/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { ResponseService } from './response/response.service';
-import { ResponseController } from './response/response.controller';
+import { ResponsesModule } from './response/response.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),  // Load environment variables from .env
-    MongooseModule.forRoot(process.env.MONGODB_URI),  // Use the MONGODB_URI from environment variables
+    MongooseModule.forRoot("mongodb+srv://elearning:elearning123@cluster0.3ylmz.mongodb.net/E-learning"),  
     QuizzesModule,
     UserInteractionsModule,
     RecommendationsModule,
@@ -25,9 +24,8 @@ import { ResponseController } from './response/response.controller';
     CoursesModule,
     ModulesModule,
     ProgressesModule,
+    ResponsesModule,
     AuthModule
   ],
-  controllers: [AppController, ResponseController],
-  providers: [AppService, ResponseService],
 })
 export class AppModule { }
