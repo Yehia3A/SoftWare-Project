@@ -22,7 +22,6 @@ export class Module {
   @Prop({ default: Date.now })
   created_at: Date; // Custom creation date if needed (timestamps already handled by mongoose)
 
- 
 }
 
 // Create and export the schema for use

@@ -1,11 +1,13 @@
-import { Controller, Post, Get, Delete, Put, Param, Body } from '@nestjs/common';
+
+import { Controller, Get, Post, Body, Param, Delete, Patch, Put } from '@nestjs/common';
+
 import { ModulesService } from './modules.service';
 import { CreateModuleDto } from './dto/create-module.dto';
 import { UpdateModuleDto } from './dto/update-module.dto';
 
 @Controller('modules')
 export class ModulesController {
-    constructor(private readonly modulesService: ModulesService) { }
+  constructor(private readonly modulesService: ModulesService) {}
 
     @Post()
     async createModule(@Body() createModuleDto: CreateModuleDto) {

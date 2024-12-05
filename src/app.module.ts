@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -9,9 +9,13 @@ import { UsersModule } from './users/user.module';
 import { CoursesModule } from './courses/courses.module';
 import { ModulesModule } from './modules/modules.module';
 import { ProgressesModule } from './progress/progress.module';
-import { AuthModule } from './auth/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+
 import { ResponsesModule } from './response/response.module';
+
+import { AuthModule } from './auth/auth.module';
+import { AuthMiddleware } from './auth/auth.middleware';
+
 
 @Module({
   imports: [
@@ -28,4 +32,11 @@ import { ResponsesModule } from './response/response.module';
     AuthModule
   ],
 })
-export class AppModule { }
+
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}

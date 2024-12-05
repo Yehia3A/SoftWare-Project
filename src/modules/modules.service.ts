@@ -7,14 +7,15 @@ import { UpdateModuleDto } from './dto/update-module.dto';
 
 @Injectable()
 export class ModulesService {
-    constructor(
-        @InjectModel(Module.name) private moduleModel: Model<ModuleDocument>,
-    ) { }
+  constructor(
+    @InjectModel(Module.name) private moduleModel: Model<ModuleDocument>,
+  ) {}
 
-    async createModule(createModuleDto: CreateModuleDto): Promise<Module> {
-        const newModule = new this.moduleModel(createModuleDto);
-        return newModule.save();
-    }
+  async create(createModuleDto: CreateModuleDto): Promise<Module> {
+    const createdModule = new this.moduleModel(createModuleDto);
+    return createdModule.save();
+  }
+
 
     async getModulesByCourseId(course_id: string): Promise<Module[]> {
         const modules = await this.moduleModel.find({ course_id }).exec();
@@ -43,4 +44,7 @@ export class ModulesService {
         }
         return { message: `Module with ID: ${id} successfully deleted` };
     }
+
+
+
 }

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { QuizzesService } from './quizzes.service';
 import { QuizzesController } from './quizzes.controller';
+
 import { Quiz, QuizSchema } from './quizzes.schema'; // Make sure this path is correct
 import { Response, ResponseSchema } from '../response/response.schema'; // Import ResponseModel from the correct path
 
@@ -14,5 +15,6 @@ import { Response, ResponseSchema } from '../response/response.schema'; // Impor
   ],
   providers: [QuizzesService],
   controllers: [QuizzesController],
+   exports: [QuizzesService]
 })
 export class QuizzesModule {}

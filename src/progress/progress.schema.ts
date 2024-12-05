@@ -6,6 +6,12 @@ import { User } from '../users/user.schema';
 @Schema({ timestamps: true })
 export class Progress extends Document {
 
+  @Prop({ type: Types.ObjectId, ref: Course.name, required: true })
+  course_id: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, ref: User.name, required: true })
+  user_id: Types.ObjectId;
+
   @Prop({ required: true, min: 0, max: 100, default: 0 })
   completion_percentage: number;
 
