@@ -20,6 +20,9 @@ const config_1 = require("@nestjs/config");
 const response_module_1 = require("./response/response.module");
 const auth_module_1 = require("./auth/auth.module");
 const auth_middleware_1 = require("./auth/auth.middleware");
+const chat_module_1 = require("./communication/chat/chat.module");
+const forum_module_1 = require("./communication/forum/forum.module");
+const notification_module_1 = require("./communication/notification/notification.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -41,6 +44,9 @@ exports.AppModule = AppModule = __decorate([
             modules_module_1.ModulesModule,
             progress_module_1.ProgressesModule,
             response_module_1.ResponsesModule,
+            chat_module_1.ChatModule,
+            forum_module_1.ForumModule,
+            notification_module_1.NotificationModule,
             auth_module_1.AuthModule
         ],
     })

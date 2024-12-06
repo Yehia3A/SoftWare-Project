@@ -10,11 +10,12 @@ import { CoursesModule } from './courses/courses.module';
 import { ModulesModule } from './modules/modules.module';
 import { ProgressesModule } from './progress/progress.module';
 import { ConfigModule } from '@nestjs/config';
-
 import { ResponsesModule } from './response/response.module';
-
 import { AuthModule } from './auth/auth.module';
 import { AuthMiddleware } from './auth/auth.middleware';
+import { ChatModule } from './communication/chat/chat.module';
+import { ForumModule } from './communication/forum/forum.module';
+import { NotificationModule } from './communication/notification/notification.module';
 
 
 @Module({
@@ -29,6 +30,9 @@ import { AuthMiddleware } from './auth/auth.middleware';
     ModulesModule,
     ProgressesModule,
     ResponsesModule,
+    ChatModule,
+    ForumModule,
+    NotificationModule,
     AuthModule
   ],
 })
