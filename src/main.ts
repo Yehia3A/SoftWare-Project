@@ -10,7 +10,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Use global validation pipe
-  app.useGlobalGuards(new JwtAuthGuard(new JwtService({ secret: 'your-secret-key' })));
+  // app.useGlobalGuards(new JwtAuthGuard(new JwtService({ secret: 'your-secret-key' })));
   app.use(cookieParser()); // Add this line
 
   // Initialize passport middleware

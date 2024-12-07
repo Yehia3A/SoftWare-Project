@@ -14,4 +14,7 @@ export class CreateChatDto {
   @IsEnum(['direct', 'group'])
   @IsOptional()
   chatType: 'direct' | 'group';
+
+  @IsMongoId()
+  chatId: string;
 }
