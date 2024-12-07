@@ -6,7 +6,7 @@ import { CreateProgressDto } from './dto/create-progress.dto';
 import { UpdateProgressDto } from './dto/update-progress.dto';
 
 @Injectable()
-export class ProgressService {
+export class progressService {
   constructor(
     @InjectModel(Progress.name) private readonly progressModel: Model<Progress>
   ) {}

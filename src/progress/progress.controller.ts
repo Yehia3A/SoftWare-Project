@@ -1,11 +1,11 @@
 import { Controller, Post, Patch, Get, Param, Body, Delete } from '@nestjs/common';
-import { ProgressService } from './progress.service';
+import { progressService } from './progress.service';
 import { CreateProgressDto } from './dto/create-progress.dto';
 import { UpdateProgressDto } from './dto/update-progress.dto';
 
 @Controller('progress')
-export class ProgressController {
-  constructor(private readonly progressService: ProgressService) {}
+export class progressController {
+  constructor(private readonly progressService: progressService) {}
 
   // Create a new progress record
   @Post()
