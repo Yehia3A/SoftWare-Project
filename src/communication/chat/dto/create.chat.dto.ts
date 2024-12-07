@@ -5,7 +5,6 @@ export class CreateChatDto {
   @IsNotEmpty()
   sender: string;
 
-  @IsOptional()
   @IsArray()
   @IsMongoId({ each: true })
   receiver: string[];
@@ -15,6 +14,4 @@ export class CreateChatDto {
   @IsOptional()
   chatType: 'direct' | 'group';
 
-  @IsMongoId()
-  chatId: string;
 }
