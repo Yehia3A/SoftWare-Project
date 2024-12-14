@@ -9,17 +9,19 @@ import { JwtAuthGuard } from './auth/guards/auth.guard';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Use global validation pipe
+  app.enableCors({
+    origin: 'http://localhost:3001', // Replace with your Next.js frontend URL
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // Allow credentials (cookies) if needed
+  });
   // app.useGlobalGuards(new JwtAuthGuard(new JwtService({ secret: 'your-secret-key' })));
   app.use(cookieParser()); // Add this line
 
   // Initialize passport middleware
   app.use(passport.initialize());
 
-
-
-  
   await app.listen(3000);
-  console.log("server running port 3000")
+
+  console.log(`Server running at http://localhost:${3000}`);
 }
 bootstrap();
