@@ -1,5 +1,5 @@
 export class UpdateInstructorProfileDto {
-    expertise: string[];
-    teachingInterests: string[];
-  }
-  
+  profilePictureUrl?: string;
+  expertise: string[];
+  teachingInterests: string[];
+}

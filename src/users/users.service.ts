@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException, ConflictException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './user.schema';
@@ -9,6 +14,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import { UpdateInstructorProfileDto } from './dto/update-instructor-profileDto';
+import { Role } from 'src/auth/dto/RoleDto';
 
 @Injectable()
 export class UsersService {
@@ -16,11 +22,11 @@ export class UsersService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private jwtService: JwtService,
   ) {}
-  
+
   async findByEmail(email: string): Promise<User> {
     return this.userModel.findOne({ email }).exec();
   }
-  
+
   async register(createUserDto: RegisterUserDto): Promise<User> {
     const { email, password, ...otherDetails } = createUserDto;
 
@@ -34,42 +40,54 @@ export class UsersService {
     const saltRounds = 10;
     const password_hash = await bcrypt.hash(password, saltRounds);
 
-    const newUser = new this.userModel({ ...otherDetails, email, password_hash });
+    const newUser = new this.userModel({
+      ...otherDetails,
+      email,
+      password_hash,
+    });
     return newUser.save();
   }
-
   async login(loginUserDto: LoginUserDto, res: Response) {
     const { email, password } = loginUserDto;
 
     try {
       const user = await this.userModel.findOne({ email });
       if (!user) {
-        throw new UnauthorizedException('User not found, please register first!');
+        throw new UnauthorizedException(
+          'User not found, please register first!',
+        );
       }
 
-      const passwordMatches = await bcrypt.compare(password, user.password_hash);
+      const passwordMatches = await bcrypt.compare(
+        password,
+        user.password_hash,
+      );
       if (!passwordMatches) {
         throw new UnauthorizedException('Email or password is incorrect!');
       }
 
-      // Generate JWT token
       const payload = { _id: user._id, role: user.role };
       const accessToken = this.jwtService.sign(payload);
 
-      // Set JWT token in the cookie
       res.cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 3600 * 1000,
+        maxAge: 3600 * 1000, // 1 hour
       });
 
-      return res.json({ message: 'Login successful', accessToken });
+      return res.json({
+        message: 'Login successful',
+        accessToken,
+        role: user.role,
+      });
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         throw error;
       } else {
         console.error('Unexpected error during login:', error);
-        throw new InternalServerErrorException('An unexpected error occurred during login.');
+        throw new InternalServerErrorException(
+          'An unexpected error occurred during login.',
+        );
       }
     }
   }
@@ -79,29 +97,73 @@ export class UsersService {
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
-    return user;
+
+    let profile: any = {
+      email: user.email,
+      role: user.role,
+      name: user.name,
+      profilePictureUrl: user.profilePictureUrl,
+    };
+
+    if (user.role === 'student') {
+      profile.learningPreferences = user.learningPreferences;
+      profile.subjectsOfInterest = user.subjectsOfInterest;
+    } else if (user.role === 'instructor') {
+      profile.expertise = user.expertise;
+      profile.teachingInterests = user.teachingInterests;
+    }
+
+    return profile;
   }
-  async updateStudentProfile(userId: string, updateStudentProfileDto: UpdateStudentProfileDto): Promise<User> {
+
+  async updateStudentProfile(
+    userId: string,
+    updateStudentProfileDto: UpdateStudentProfileDto,
+  ): Promise<User> {
     try {
-      return await this.userModel.findByIdAndUpdate(userId, updateStudentProfileDto, { new: true }).exec();
+      return await this.userModel
+        .findByIdAndUpdate(userId, updateStudentProfileDto, { new: true })
+        .exec();
     } catch (error) {
-      console.error("Error updating student profile:", error);
-      // Handle the error appropriately, e.g., throw a custom error or return a default value
-      throw new Error("Failed to update student profile");
+      console.error('Error updating student profile:', error);
+      throw new Error('Failed to update student profile');
     }
   }
-  
-  async updateInstructorProfile(userId: string, updateInstructorProfileDto: UpdateInstructorProfileDto): Promise<User> {
+
+  async updateInstructorProfile(
+    userId: string,
+    updateInstructorProfileDto: UpdateInstructorProfileDto,
+  ): Promise<User> {
     try {
-      const updatedUser = await this.userModel.findByIdAndUpdate(userId, updateInstructorProfileDto, { new: true }).exec();
+      const updatedUser = await this.userModel
+        .findByIdAndUpdate(userId, updateInstructorProfileDto, { new: true })
+        .exec();
       if (!updatedUser) {
         throw new Error('User not found');
       }
       return updatedUser;
     } catch (error) {
-      console.error(`Error updating instructor profile for userId ${userId}:`, error.message);
+      console.error(
+        `Error updating instructor profile for userId ${userId}:`,
+        error.message,
+      );
       throw new Error('Failed to update instructor profile');
     }
   }
-  
+  async updateProfilePicture(
+    userId: string,
+    profilePictureUrl: string,
+  ): Promise<void> {
+    try {
+      await this.userModel
+        .findByIdAndUpdate(userId, { profilePictureUrl })
+        .exec();
+    } catch (error) {
+      console.error(
+        `Error updating profile picture for userId ${userId}:`,
+        error.message,
+      );
+      throw new Error('Failed to update profile picture');
+    }
+  }
 }

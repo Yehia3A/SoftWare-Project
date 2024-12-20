@@ -1,4 +1,3 @@
-// auth.middleware.ts (example of an authentication middleware)
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import * as passport from 'passport';

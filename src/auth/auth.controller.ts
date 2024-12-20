@@ -11,16 +11,21 @@ export class AuthController {
   async register(@Body() registerUserDto: RegisterUserDto): Promise<string> {
     return this.authService.register(registerUserDto);
   }
-
-  @Post('signin')
+  @Post('login')
   async signIn(
     @Body() signInDto: { email: string; password: string },
-    @Res({ passthrough: true }) response: Response
-  ): Promise<{ access_token: string; payload: { _id: string; email: string; role: string } }> {
-    const { access_token, payload } = await this.authService.signIn(signInDto.email, signInDto.password);
-    
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<{
+    access_token: string;
+    payload: { _id: string; email: string; role: string };
+  }> {
+    const { access_token, payload } = await this.authService.signIn(
+      signInDto.email,
+      signInDto.password,
+    );
+
     // Set the access token as a cookie
-    response.cookie('accessToken', access_token, { httpOnly: true });
+    response.cookie('accessToken', access_token, { httpOnly: true, path: '/' });
 
     return { access_token, payload };
   }

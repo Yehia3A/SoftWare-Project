@@ -13,11 +13,8 @@ export declare class UsersService {
     findByEmail(email: string): Promise<User>;
     register(createUserDto: RegisterUserDto): Promise<User>;
     login(loginUserDto: LoginUserDto, res: Response): Promise<Response<any, Record<string, any>>>;
-    getProfile(userId: string): Promise<import("mongoose").Document<unknown, {}, UserDocument> & User & import("mongoose").Document<unknown, any, any> & Required<{
-        _id: unknown;
-    }> & {
-        __v: number;
-    }>;
+    getProfile(userId: string): Promise<any>;
     updateStudentProfile(userId: string, updateStudentProfileDto: UpdateStudentProfileDto): Promise<User>;
     updateInstructorProfile(userId: string, updateInstructorProfileDto: UpdateInstructorProfileDto): Promise<User>;
+    updateProfilePicture(userId: string, profilePictureUrl: string): Promise<void>;
 }

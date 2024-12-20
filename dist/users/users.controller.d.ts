@@ -9,11 +9,10 @@ export declare class UsersController {
     constructor(usersService: UsersService);
     register(createUserDto: RegisterUserDto): Promise<import("./user.schema").User>;
     login(loginUserDto: LoginUserDto, res: Response): Promise<Response<any, Record<string, any>>>;
-    getProfile(req: any): Promise<import("mongoose").Document<unknown, {}, import("./user.schema").UserDocument> & import("./user.schema").User & import("mongoose").Document<unknown, any, any> & Required<{
-        _id: unknown;
-    }> & {
-        __v: number;
+    getProfile(req: any): Promise<any>;
+    updateStudentProfile(req: any, updateStudentProfileDto: UpdateStudentProfileDto): Promise<import("./user.schema").User>;
+    updateInstructorProfile(req: any, updateInstructorProfileDto: UpdateInstructorProfileDto): Promise<import("./user.schema").User>;
+    uploadProfilePicture(userId: string, file: Express.Multer.File): Promise<{
+        profilePictureUrl: string;
     }>;
-    updateStudentProfile(userId: string, updateStudentProfileDto: UpdateStudentProfileDto): Promise<import("./user.schema").User>;
-    updateInstructorProfile(userId: string, updateInstructorProfileDto: UpdateInstructorProfileDto): Promise<import("./user.schema").User>;
 }

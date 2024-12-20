@@ -9,7 +9,7 @@ import { UserSchema } from './user.schema';
   imports: [
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'your-secret-key',  // Use environment variable for the secret
+      secret: 'yourSecretKey', // Use environment variable for the secret
       signOptions: { expiresIn: '24h' },
     }),
     // Using forwardRef here too to avoid circular dependency
