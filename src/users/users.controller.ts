@@ -1,4 +1,16 @@
-import { Controller, Post, Body, Get, Patch, UseGuards, Request, Res, Param, Put } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Patch,
+  UseGuards,
+  Request,
+  Res,
+  Param,
+  Put,
+  UploadedFile,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { RegisterUserDto } from './dto/RegisterUserDto';
 import { UpdateStudentProfileDto } from './dto/update-student-profile.dto';
@@ -23,25 +35,44 @@ export class UsersController {
   async login(@Body() loginUserDto: LoginUserDto, @Res() res: Response) {
     return await this.usersService.login(loginUserDto, res);
   }
-
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@Request() req) {
-    console.log(req.user); // Check the contents of req.user to verify it's being populated
-    return this.usersService.getProfile(req.user._id); // Use the _id from req.user
+    console.log('Decoded User Payload:', req.user); // Debugging: Check the contents of req.user
+    return this.usersService.getProfile(req.user._id); // Use the userId from req.user
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.student)
   @Put(':id/student-profile')
-  updateStudentProfile(@Param('id') userId: string, @Body() updateStudentProfileDto: UpdateStudentProfileDto) {
-    return this.usersService.updateStudentProfile(userId, updateStudentProfileDto);
+  updateStudentProfile(
+    @Request() req,
+    @Body() updateStudentProfileDto: UpdateStudentProfileDto,
+  ) {
+    return this.usersService.updateStudentProfile(
+      req.user._id,
+      updateStudentProfileDto,
+    );
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Instructor)
   @Put(':id/instructor-profile')
-  updateInstructorProfile(@Param('id') userId: string, @Body() updateInstructorProfileDto: UpdateInstructorProfileDto) {
-    return this.usersService.updateInstructorProfile(userId, updateInstructorProfileDto);
+  updateInstructorProfile(
+    @Request() req,
+    @Body() updateInstructorProfileDto: UpdateInstructorProfileDto,
+  ) {
+    return this.usersService.updateInstructorProfile(
+      req.user._id,
+      updateInstructorProfileDto,
+    );
+  }
+  async uploadProfilePicture(
+    @Param('id') userId: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const profilePictureUrl = `/uploads/profile-pictures/${file.filename}`;
+    await this.usersService.updateProfilePicture(userId, profilePictureUrl);
+    return { profilePictureUrl };
   }
 }

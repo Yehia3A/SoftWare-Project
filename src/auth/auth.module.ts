@@ -10,7 +10,6 @@ import { UsersModule } from 'src/users/user.module';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: 'yourSecretKey', // Replace with your actual secret key
-      signOptions: { expiresIn: '60m' },
     }),
     UsersModule,
   ],
