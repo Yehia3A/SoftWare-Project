@@ -3,6 +3,9 @@ import {
   UnauthorizedException,
   ConflictException,
   InternalServerErrorException,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -25,6 +28,9 @@ export class UsersService {
 
   async findByEmail(email: string): Promise<User> {
     return this.userModel.findOne({ email }).exec();
+  }
+  async getAllUsers(): Promise<User[]> {
+    return this.userModel.find();
   }
 
   async register(createUserDto: RegisterUserDto): Promise<User> {
@@ -165,5 +171,26 @@ export class UsersService {
       );
       throw new Error('Failed to update profile picture');
     }
+  }
+
+  async deleteUser(userId: string): Promise<User> {
+    if (!userId) {
+      throw new BadRequestException('User ID is required');
+    }
+    return this.userModel.findByIdAndDelete(userId);
+  }
+  async searchStudentByName(name: string): Promise<User[]> {
+    const filter = {
+      role: 'student', // Filter by role
+      name: { $regex: name || '', $options: 'i' }, // Case-insensitive partial match
+    };
+    return this.userModel.find(filter).exec();
+  }
+  async searchInstructorByName(name: string): Promise<User[]> {
+    const filter = {
+      role: 'instructor', // Filter by role
+      name: { $regex: name || '', $options: 'i' }, // Case-insensitive partial match
+    };
+    return this.userModel.find(filter).exec();
   }
 }

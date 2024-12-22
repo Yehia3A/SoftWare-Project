@@ -48,6 +48,18 @@ let UsersController = class UsersController {
         await this.usersService.updateProfilePicture(userId, profilePictureUrl);
         return { profilePictureUrl };
     }
+    async getAllUsers() {
+        return this.usersService.getAllUsers();
+    }
+    async deleteUser(userId) {
+        return this.usersService.deleteUser(userId);
+    }
+    async searchStudent(name) {
+        return this.usersService.searchStudentByName(name);
+    }
+    async searchInstructor(name) {
+        return this.usersService.searchInstructorByName(name);
+    }
 };
 exports.UsersController = UsersController;
 __decorate([
@@ -100,6 +112,33 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "uploadProfilePicture", null);
+__decorate([
+    (0, common_1.Get)('/'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getAllUsers", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "deleteUser", null);
+__decorate([
+    (0, common_1.Get)('search/student'),
+    __param(0, (0, common_1.Query)('name')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "searchStudent", null);
+__decorate([
+    (0, common_1.Get)('search/instructor'),
+    __param(0, (0, common_1.Query)('name')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "searchInstructor", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService])
