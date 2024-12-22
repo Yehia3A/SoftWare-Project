@@ -33,7 +33,16 @@ export class progressController {
   async getProgressById(@Param('id') id: string) {
     return this.progressService.getProgressById(id);
   }
-
+  @Get('dashboard/:userId')
+  async getStudentDashboard(@Param('userId') userId: string) {
+    return this.progressService.getStudentDashboardData(userId);
+  }
+  
+  @Get('analytics/:courseId')
+  async getInstructorAnalytics(@Param('courseId') courseId: string) {
+    return this.progressService.getInstructorAnalytics(courseId);
+  }
+  
   // Delete a progress record by MongoDB ObjectID
   @Delete(':id')
   async deleteProgress(@Param('id') id: string) {
