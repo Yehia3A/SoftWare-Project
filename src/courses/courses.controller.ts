@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
@@ -9,35 +19,40 @@ import { Role } from 'src/auth/dto/RoleDto';
 @Controller('courses')
 @UseGuards(RolesGuard)
 export class CoursesController {
-    constructor(private readonly coursesService: CoursesService) { }
-    @Roles(Role.Instructor)
-    @Post('create-course')
-    createCourse(@Body() createCourseDto: CreateCourseDto) {
-        return this.coursesService.createCourse(createCourseDto);
-    }
+  constructor(private readonly coursesService: CoursesService) {}
+  @Roles(Role.Instructor)
+  @Post('create-course')
+  createCourse(@Body() createCourseDto: CreateCourseDto) {
+    return this.coursesService.createCourse(createCourseDto);
+  }
 
-    @Get()
-    getAllCourses() {
-        return this.coursesService.getAllCourses();
-    }
+  @Get()
+  getAllCourses() {
+    return this.coursesService.getAllCourses();
+  }
 
-    @Get('name')
-    getCourseById(@Param('id') courseId: string) {
-        return this.coursesService.getCourseById(courseId);
-    }
+  @Get('search')
+  getCourseByName(@Query('name') courseName: string) {
+    return this.coursesService.getCourseByName(courseName);
+  }
 
-    @Roles(Role.Instructor)
-    @Put('name')
-    updateCourse(
-        @Param('name') courseId: string,
-        @Body() updateCourseDto: UpdateCourseDto,
-    ) {
-        return this.coursesService.updateCourse(courseId, updateCourseDto);
-    }
+  @Get(':id')
+  getCourseById(@Param('id') courseId: string) {
+    return this.coursesService.getCourseById(courseId);
+  }
 
-    @Roles(Role.Instructor)
-    @Delete('name')
-    deleteCourse(@Param('id') courseId: string) {
-        return this.coursesService.deleteCourse(courseId);
-    }
+  @Roles(Role.Instructor)
+  @Put(':name')
+  updateCourse(
+    @Param('name') courseId: string,
+    @Body() updateCourseDto: UpdateCourseDto,
+  ) {
+    return this.coursesService.updateCourse(courseId, updateCourseDto);
+  }
+
+  @Roles(Role.Instructor)
+  @Delete(':name')
+  deleteCourse(@Param('id') courseId: string) {
+    return this.coursesService.deleteCourse(courseId);
+  }
 }
