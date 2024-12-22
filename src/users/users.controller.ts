@@ -10,6 +10,8 @@ import {
   Param,
   Put,
   UploadedFile,
+  Delete,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { RegisterUserDto } from './dto/RegisterUserDto';
@@ -21,6 +23,8 @@ import { Role } from 'src/auth/dto/RoleDto';
 import { UpdateInstructorProfileDto } from './dto/update-instructor-profileDto';
 import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { User } from './user.schema';
+import { use } from 'passport';
 
 @Controller('users')
 export class UsersController {
@@ -74,5 +78,20 @@ export class UsersController {
     const profilePictureUrl = `/uploads/profile-pictures/${file.filename}`;
     await this.usersService.updateProfilePicture(userId, profilePictureUrl);
     return { profilePictureUrl };
+  }
+  @Get('/') async getAllUsers(): Promise<User[]> {
+    return this.usersService.getAllUsers();
+  }
+  @Delete(':id')
+  async deleteUser(@Param('id') userId: string): Promise<User> {
+    return this.usersService.deleteUser(userId);
+  }
+  @Get('search/student')
+  async searchStudent(@Query('name') name: string): Promise<User[]> {
+    return this.usersService.searchStudentByName(name);
+  }
+  @Get('search/instructor')
+  async searchInstructor(@Query('name') name: string): Promise<User[]> {
+    return this.usersService.searchInstructorByName(name);
   }
 }

@@ -27,6 +27,9 @@ let UsersService = class UsersService {
     async findByEmail(email) {
         return this.userModel.findOne({ email }).exec();
     }
+    async getAllUsers() {
+        return this.userModel.find();
+    }
     async register(createUserDto) {
         const { email, password, ...otherDetails } = createUserDto;
         const existingUser = await this.userModel.findOne({ email });
@@ -136,6 +139,26 @@ let UsersService = class UsersService {
             console.error(`Error updating profile picture for userId ${userId}:`, error.message);
             throw new Error('Failed to update profile picture');
         }
+    }
+    async deleteUser(userId) {
+        if (!userId) {
+            throw new common_1.BadRequestException('User ID is required');
+        }
+        return this.userModel.findByIdAndDelete(userId);
+    }
+    async searchStudentByName(name) {
+        const filter = {
+            role: 'student',
+            name: { $regex: name || '', $options: 'i' },
+        };
+        return this.userModel.find(filter).exec();
+    }
+    async searchInstructorByName(name) {
+        const filter = {
+            role: 'instructor',
+            name: { $regex: name || '', $options: 'i' },
+        };
+        return this.userModel.find(filter).exec();
     }
 };
 exports.UsersService = UsersService;

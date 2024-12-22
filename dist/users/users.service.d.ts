@@ -11,10 +11,14 @@ export declare class UsersService {
     private jwtService;
     constructor(userModel: Model<UserDocument>, jwtService: JwtService);
     findByEmail(email: string): Promise<User>;
+    getAllUsers(): Promise<User[]>;
     register(createUserDto: RegisterUserDto): Promise<User>;
     login(loginUserDto: LoginUserDto, res: Response): Promise<Response<any, Record<string, any>>>;
     getProfile(userId: string): Promise<any>;
     updateStudentProfile(userId: string, updateStudentProfileDto: UpdateStudentProfileDto): Promise<User>;
     updateInstructorProfile(userId: string, updateInstructorProfileDto: UpdateInstructorProfileDto): Promise<User>;
     updateProfilePicture(userId: string, profilePictureUrl: string): Promise<void>;
+    deleteUser(userId: string): Promise<User>;
+    searchStudentByName(name: string): Promise<User[]>;
+    searchInstructorByName(name: string): Promise<User[]>;
 }
