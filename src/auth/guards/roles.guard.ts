@@ -1,25 +1,32 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Observable } from 'rxjs';
+import { Role } from 'src/auth/dto/RoleDto';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) {}
 
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
-    const roles = this.reflector.get<string[]>('roles', context.getHandler());
-    if (!roles) {
-      return true;
+  canActivate(context: ExecutionContext): boolean {
+    const requiredRoles = this.reflector.get<Role[]>('roles', context.getHandler());
+    if (!requiredRoles) {
+      return true; // No roles required
     }
+
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    console.log("User:", user); // Log the user for debugging
+
+    console.log('User:', user);
+    console.log('Required Roles:', requiredRoles);
+
     if (!user) {
-      console.error("User is undefined"); // Log the issue
-      return false; // or handle the case where user is undefined
+      console.error('No user attached to request');
+      return false; // User not authenticated
     }
-    return roles.some(role => user?.role === role);
+
+    const hasRole = requiredRoles.includes(user.role);
+    console.log('Has Required Role:', hasRole);
+
+    return hasRole;
   }
 }
+
