@@ -17,7 +17,6 @@ import { Roles } from 'src/auth/decorator/roles.decorator';
 import { Role } from 'src/auth/dto/RoleDto';
 
 @Controller('courses')
-@UseGuards(RolesGuard)
 export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
   @Roles(Role.Instructor)
@@ -25,14 +24,16 @@ export class CoursesController {
   createCourse(@Body() createCourseDto: CreateCourseDto) {
     return this.coursesService.createCourse(createCourseDto);
   }
-
+  @Get('categories') async getCategories() {
+    return this.coursesService.getCategories();
+  }
   @Get()
   getAllCourses() {
     return this.coursesService.getAllCourses();
   }
 
   @Get('search')
-  getCourseByName(@Query('name') courseName: string) {
+  getCourseByName(@Query('title') courseName: string) {
     return this.coursesService.getCourseByName(courseName);
   }
 

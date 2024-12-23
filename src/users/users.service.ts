@@ -29,6 +29,9 @@ export class UsersService {
   async findByEmail(email: string): Promise<User> {
     return this.userModel.findOne({ email }).exec();
   }
+  async findById(id: string): Promise<User> {
+    return this.userModel.findById(id).exec();
+  }
   async getAllUsers(): Promise<User[]> {
     return this.userModel.find();
   }
@@ -85,6 +88,7 @@ export class UsersService {
         message: 'Login successful',
         accessToken,
         role: user.role,
+        _id: user._id,
       });
     } catch (error) {
       if (error instanceof UnauthorizedException) {

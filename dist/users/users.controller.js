@@ -17,12 +17,15 @@ const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
 const RegisterUserDto_1 = require("./dto/RegisterUserDto");
 const update_student_profile_dto_1 = require("./dto/update-student-profile.dto");
+const update_instructor_profileDto_1 = require("./dto/update-instructor-profileDto");
 const user_login_dto_1 = require("./dto/user-login.dto");
 const roles_decorator_1 = require("../auth/decorator/roles.decorator");
 const RoleDto_1 = require("../auth/dto/RoleDto");
-const update_instructor_profileDto_1 = require("./dto/update-instructor-profileDto");
 const auth_guard_1 = require("../auth/guards/auth.guard");
 const roles_guard_1 = require("../auth/guards/roles.guard");
+const platform_express_1 = require("@nestjs/platform-express");
+const multer_1 = require("multer");
+const path_1 = require("path");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
@@ -43,15 +46,22 @@ let UsersController = class UsersController {
     updateInstructorProfile(req, updateInstructorProfileDto) {
         return this.usersService.updateInstructorProfile(req.user._id, updateInstructorProfileDto);
     }
-    async uploadProfilePicture(userId, file) {
+    async uploadProfilePicture(id, file) {
+        if (!file) {
+            throw new common_1.HttpException('File not provided', common_1.HttpStatus.BAD_REQUEST);
+        }
         const profilePictureUrl = `/uploads/profile-pictures/${file.filename}`;
-        await this.usersService.updateProfilePicture(userId, profilePictureUrl);
+        await this.usersService.updateProfilePicture(id, profilePictureUrl);
         return { profilePictureUrl };
     }
     async getAllUsers() {
         return this.usersService.getAllUsers();
     }
-    async deleteUser(userId) {
+    async deleteUser(req) {
+        const userId = req.user._id;
+        if (!userId) {
+            throw new common_1.BadRequestException('User ID is required');
+        }
         return this.usersService.deleteUser(userId);
     }
     async searchStudent(name) {
@@ -106,6 +116,19 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "updateInstructorProfile", null);
 __decorate([
+    (0, common_1.UseGuards)(auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)(':id/upload-profile-picture'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('profilePicture', {
+        storage: (0, multer_1.diskStorage)({
+            destination: './uploads/profile-pictures',
+            filename: (req, file, callback) => {
+                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+                const ext = (0, path_1.extname)(file.originalname);
+                const filename = `${req.params.id}-${uniqueSuffix}${ext}`;
+                callback(null, filename);
+            },
+        }),
+    })),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
@@ -119,10 +142,11 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getAllUsers", null);
 __decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.UseGuards)(auth_guard_1.JwtAuthGuard),
+    (0, common_1.Delete)(''),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "deleteUser", null);
 __decorate([

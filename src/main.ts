@@ -4,7 +4,9 @@ import { ValidationPipe } from '@nestjs/common';
 import * as passport from 'passport';
 import * as cookieParser from 'cookie-parser'; // Add this import
 import { JwtService } from '@nestjs/jwt';
+import { join } from 'path';
 
+import * as express from 'express';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -13,6 +15,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // Allow credentials (cookies)
   });
+  app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
 
   app.use(cookieParser());
   app.use(passport.initialize());

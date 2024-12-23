@@ -19,6 +19,9 @@ export class CoursesService {
   async getAllCourses(): Promise<Course[]> {
     return this.courseModel.find().exec();
   }
+  async getCategories(): Promise<string[]> {
+    return this.courseModel.distinct('category').exec();
+  }
 
   // Retrieve a single course by ID
   async getCourseById(courseId: string): Promise<Course> {

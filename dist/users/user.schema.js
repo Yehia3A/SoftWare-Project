@@ -50,6 +50,10 @@ __decorate([
     (0, mongoose_1.Prop)({ type: [String], required: false }),
     __metadata("design:type", Array)
 ], User.prototype, "teachingInterests", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ required: false, type: [String], ref: 'Course', default: [] }),
+    __metadata("design:type", Array)
+], User.prototype, "courses", void 0);
 exports.User = User = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], User);
