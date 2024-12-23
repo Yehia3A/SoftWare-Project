@@ -19,6 +19,9 @@ export class Course {
 
   @Prop({ required: true })
   createdBy: string; // ID of the instructor who created the course
+
+  @Prop({default: false})
+  isDeleted: boolean;
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);
