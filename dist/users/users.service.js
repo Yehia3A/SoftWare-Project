@@ -38,7 +38,11 @@ let UsersService = class UsersService {
         }
         const saltRounds = 10;
         const password_hash = await bcrypt.hash(password, saltRounds);
-        const newUser = new this.userModel({ ...otherDetails, email, password_hash });
+        const newUser = new this.userModel({
+            ...otherDetails,
+            email,
+            password_hash,
+        });
         return newUser.save();
     }
     async login(loginUserDto, res) {
@@ -59,7 +63,11 @@ let UsersService = class UsersService {
                 secure: process.env.NODE_ENV === 'production',
                 maxAge: 3600 * 1000,
             });
-            return res.json({ message: 'Login successful', accessToken });
+            return res.json({
+                message: 'Login successful',
+                accessToken,
+                role: user.role,
+            });
         }
         catch (error) {
             if (error instanceof common_1.UnauthorizedException) {
@@ -76,20 +84,38 @@ let UsersService = class UsersService {
         if (!user) {
             throw new common_1.UnauthorizedException('User not found');
         }
-        return user;
+        let profile = {
+            email: user.email,
+            role: user.role,
+            name: user.name,
+            profilePictureUrl: user.profilePictureUrl,
+        };
+        if (user.role === 'student') {
+            profile.learningPreferences = user.learningPreferences;
+            profile.subjectsOfInterest = user.subjectsOfInterest;
+        }
+        else if (user.role === 'instructor') {
+            profile.expertise = user.expertise;
+            profile.teachingInterests = user.teachingInterests;
+        }
+        return profile;
     }
     async updateStudentProfile(userId, updateStudentProfileDto) {
         try {
-            return await this.userModel.findByIdAndUpdate(userId, updateStudentProfileDto, { new: true }).exec();
+            return await this.userModel
+                .findByIdAndUpdate(userId, updateStudentProfileDto, { new: true })
+                .exec();
         }
         catch (error) {
-            console.error("Error updating student profile:", error);
-            throw new Error("Failed to update student profile");
+            console.error('Error updating student profile:', error);
+            throw new Error('Failed to update student profile');
         }
     }
     async updateInstructorProfile(userId, updateInstructorProfileDto) {
         try {
-            const updatedUser = await this.userModel.findByIdAndUpdate(userId, updateInstructorProfileDto, { new: true }).exec();
+            const updatedUser = await this.userModel
+                .findByIdAndUpdate(userId, updateInstructorProfileDto, { new: true })
+                .exec();
             if (!updatedUser) {
                 throw new Error('User not found');
             }
@@ -98,6 +124,17 @@ let UsersService = class UsersService {
         catch (error) {
             console.error(`Error updating instructor profile for userId ${userId}:`, error.message);
             throw new Error('Failed to update instructor profile');
+        }
+    }
+    async updateProfilePicture(userId, profilePictureUrl) {
+        try {
+            await this.userModel
+                .findByIdAndUpdate(userId, { profilePictureUrl })
+                .exec();
+        }
+        catch (error) {
+            console.error(`Error updating profile picture for userId ${userId}:`, error.message);
+            throw new Error('Failed to update profile picture');
         }
     }
 };

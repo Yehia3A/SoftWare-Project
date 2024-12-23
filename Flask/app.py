@@ -12,7 +12,7 @@ def recommend(user_data, n_recommendations=5):
         return []
 
     client = MongoClient('mongodb+srv://admin:admin123@cluster0.3ylmz.mongodb.net/')
-    db = client['your_database_name']
+    db = client['BrainBuddiesDB']
     user_document = db.users.find_one({"_id": user_id})
 
     if not user_document:

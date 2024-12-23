@@ -34,14 +34,19 @@ let UsersController = class UsersController {
         return await this.usersService.login(loginUserDto, res);
     }
     async getProfile(req) {
-        console.log(req.user);
+        console.log('Decoded User Payload:', req.user);
         return this.usersService.getProfile(req.user._id);
     }
-    updateStudentProfile(userId, updateStudentProfileDto) {
-        return this.usersService.updateStudentProfile(userId, updateStudentProfileDto);
+    updateStudentProfile(req, updateStudentProfileDto) {
+        return this.usersService.updateStudentProfile(req.user._id, updateStudentProfileDto);
     }
-    updateInstructorProfile(userId, updateInstructorProfileDto) {
-        return this.usersService.updateInstructorProfile(userId, updateInstructorProfileDto);
+    updateInstructorProfile(req, updateInstructorProfileDto) {
+        return this.usersService.updateInstructorProfile(req.user._id, updateInstructorProfileDto);
+    }
+    async uploadProfilePicture(userId, file) {
+        const profilePictureUrl = `/uploads/profile-pictures/${file.filename}`;
+        await this.usersService.updateProfilePicture(userId, profilePictureUrl);
+        return { profilePictureUrl };
     }
 };
 exports.UsersController = UsersController;
@@ -72,22 +77,29 @@ __decorate([
     (0, common_1.UseGuards)(auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)(RoleDto_1.Role.student),
     (0, common_1.Put)(':id/student-profile'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_student_profile_dto_1.UpdateStudentProfileDto]),
+    __metadata("design:paramtypes", [Object, update_student_profile_dto_1.UpdateStudentProfileDto]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "updateStudentProfile", null);
 __decorate([
     (0, common_1.UseGuards)(auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)(RoleDto_1.Role.Instructor),
     (0, common_1.Put)(':id/instructor-profile'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_instructor_profileDto_1.UpdateInstructorProfileDto]),
+    __metadata("design:paramtypes", [Object, update_instructor_profileDto_1.UpdateInstructorProfileDto]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "updateInstructorProfile", null);
+__decorate([
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "uploadProfilePicture", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService])
