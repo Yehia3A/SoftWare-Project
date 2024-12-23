@@ -46,8 +46,8 @@ export class progressService {
   }
 
   // Aggregated analytics for students
-async getStudentDashboardData(userId: string): Promise<any> {
-  const progressData = await this.progressModel.find({ user_id: userId }).exec();
+async getStudentDashboardData(user_id: string): Promise<any> {
+  const progressData = await this.progressModel.find({ user_id: user_id }).exec();
   const totalCourses = progressData.length;
   const avgCompletionRate = 
     progressData.reduce((sum, p) => sum + p.completion_percentage, 0) / totalCourses;
@@ -55,13 +55,13 @@ async getStudentDashboardData(userId: string): Promise<any> {
   return {
     totalCourses,
     avgCompletionRate: avgCompletionRate.toFixed(2),
-    engagementTrends: progressData.map((p) => ({ courseId: p.course_id, progress: p.completion_percentage }))
+    engagementTrends: progressData.map((p) => ({ course_id: p.course_id, progress: p.completion_percentage }))
   };
 }
 
 // Aggregated analytics for instructors
-async getInstructorAnalytics(courseId: string): Promise<any> {
-  const progressData = await this.progressModel.find({ course_id: courseId }).exec();
+async getInstructorAnalytics(course_id: string): Promise<any> {
+  const progressData = await this.progressModel.find({ course_id: course_id }).exec();
   const totalStudents = progressData.length;
   const avgCompletionRate = 
     progressData.reduce((sum, p) => sum + p.completion_percentage, 0) / totalStudents;
@@ -69,7 +69,7 @@ async getInstructorAnalytics(courseId: string): Promise<any> {
   return {
     totalStudents,
     avgCompletionRate: avgCompletionRate.toFixed(2),
-    engagementTrends: progressData.map((p) => ({ userId: p.user_id, progress: p.completion_percentage }))
+    engagementTrends: progressData.map((p) => ({ user_id: p.user_id, progress: p.completion_percentage }))
   };
 }
 
