@@ -45,6 +45,34 @@ export class progressService {
     return progress;
   }
 
+  // Aggregated analytics for students
+async getStudentDashboardData(user_id: string): Promise<any> {
+  const progressData = await this.progressModel.find({ user_id: user_id }).exec();
+  const totalCourses = progressData.length;
+  const avgCompletionRate = 
+    progressData.reduce((sum, p) => sum + p.completion_percentage, 0) / totalCourses;
+
+  return {
+    totalCourses,
+    avgCompletionRate: avgCompletionRate.toFixed(2),
+    engagementTrends: progressData.map((p) => ({ course_id: p.course_id, progress: p.completion_percentage }))
+  };
+}
+
+// Aggregated analytics for instructors
+async getInstructorAnalytics(course_id: string): Promise<any> {
+  const progressData = await this.progressModel.find({ course_id: course_id }).exec();
+  const totalStudents = progressData.length;
+  const avgCompletionRate = 
+    progressData.reduce((sum, p) => sum + p.completion_percentage, 0) / totalStudents;
+
+  return {
+    totalStudents,
+    avgCompletionRate: avgCompletionRate.toFixed(2),
+    engagementTrends: progressData.map((p) => ({ user_id: p.user_id, progress: p.completion_percentage }))
+  };
+}
+
   // Delete a progress record by MongoDB ObjectID
   async deleteProgress(id: string): Promise<Progress> {
     const deletedProgress = await this.progressModel.findByIdAndDelete(id).exec();

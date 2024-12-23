@@ -1,15 +1,44 @@
-import { IsNotEmpty, IsArray } from 'class-validator';
+import { IsString, IsArray, ValidateNested, IsNotEmpty } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export class CreateQuizDto {
+class QuestionDto {
+  @IsString()
   @IsNotEmpty()
-  moduleId: string;
+  question_id: string;
+
+  @IsString()
+  @IsNotEmpty()
+  text: string;
 
   @IsArray()
-  questions: Array<{
-    text: string;
-    options: string[];
-    correctAnswer: string;
-    explanation?: string;
-    difficulty: 'Easy' | 'Medium' | 'Hard';
-  }>;
+  @IsNotEmpty({ each: true })
+  options: string[];
+
+  @IsString()
+  @IsNotEmpty()
+  correctAnswer: string;
+
+  @IsString()
+  @IsNotEmpty()
+  explanation: string;
+
+}
+
+export class CreateQuizDto {
+  @IsString()
+  @IsNotEmpty()
+  module_id: string;
+
+  @IsString()
+  @IsNotEmpty()
+  title: string;
+
+  @IsString()
+  @IsNotEmpty()
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => QuestionDto)
+  questions: QuestionDto[];
 }

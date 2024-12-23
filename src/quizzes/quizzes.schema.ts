@@ -7,11 +7,13 @@ export type QuizDocument = HydratedDocument<Quiz>;
 @Schema({ timestamps: true }) // Automatically manages `createdAt` and `updatedAt`
 export class Quiz {
   @Prop({ required: true })
-  quiz_id: string; // Unique identifier for the quiz
+  title: string; // Unique identifier for the quiz
 
   @Prop({ required: true })
   module_id: string; // Associated module ID
 
+  difficulty: { type: String, required: true, enum: ['Easy', 'Medium', 'Hard'] }; // Difficulty leve
+  
   @Prop({
     type: [
       {
@@ -20,7 +22,7 @@ export class Quiz {
         options: { type: [String], required: true }, // Multiple-choice options
         correctAnswer: { type: String, required: true }, // Correct option
         explanation: { type: String, required: true }, // Explanation for feedback
-        difficulty: { type: String, required: true, enum: ['Easy', 'Medium', 'Hard'] }, // Difficulty level
+       
       },
     ],
     required: true,
@@ -31,7 +33,7 @@ export class Quiz {
     options: string[];
     correctAnswer: string;
     explanation: string;
-    difficulty: 'Easy' | 'Medium' | 'Hard';
+    
   }>;
 }
 

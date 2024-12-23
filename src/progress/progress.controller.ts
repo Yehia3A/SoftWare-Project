@@ -1,4 +1,4 @@
-import { Controller, Post, Patch, Get, Param, Body, Delete } from '@nestjs/common';
+import { Controller, Post, Patch, Get, Param, Body, Delete, Query } from '@nestjs/common';
 import { progressService } from './progress.service';
 import { CreateProgressDto } from './dto/create-progress.dto';
 import { UpdateProgressDto } from './dto/update-progress.dto';
@@ -32,6 +32,18 @@ export class progressController {
   @Get(':id')
   async getProgressById(@Param('id') id: string) {
     return this.progressService.getProgressById(id);
+  }
+
+  // Aggregated analytics for students
+  @Get('dashboard/student')
+  async getStudentDashboard(@Query('user_id') user_id: string) {
+    return this.progressService.getStudentDashboardData(user_id);
+  }
+
+  // Aggregated analytics for instructors
+  @Get('analytics/instructor')
+  async getInstructorAnalytics(@Query('course_id') course_id: string) {
+    return this.progressService.getInstructorAnalytics(course_id);
   }
 
   // Delete a progress record by MongoDB ObjectID
