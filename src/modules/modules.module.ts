@@ -32,6 +32,6 @@ export const ModulesSchema = SchemaFactory.createForClass(Modules);
   ],
   controllers: [ModulesController],
   providers: [ModulesService],
-  exports: [ModulesService],
+  exports: [ModulesService, MongooseModule],
 })
 export class ModulesModule {}
