@@ -35,7 +35,7 @@ export class progressController {
   }
 
   // Aggregated analytics for students
-  @Get('dashboard/student/performanc-metrics')
+  @Get('dashboard/student/performance-metrics')
   async getStudentDashboard(@Query('user_id') user_id: string) {
     return this.progressService.getStudentDashboardData(user_id);
   }
