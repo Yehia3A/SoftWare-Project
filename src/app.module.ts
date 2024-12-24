@@ -16,12 +16,19 @@ import { AuthMiddleware } from './auth/auth.middleware';
 import { ChatModule } from './communication/chat/chat.module';
 import { ForumModule } from './communication/forum/forum.module';
 import { NotificationModule } from './communication/notification/notification.module';
-
+import { SchedulerModule } from './scheduler/scheduler.module';
+import { scheduler } from 'timers/promises';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),  // Load environment variables from .env
-    MongooseModule.forRoot("mongodb+srv://elearning:elearning123@cluster0.3ylmz.mongodb.net/E-learning"),  
+    ConfigModule.forRoot(),
+    ScheduleModule.forRoot(),
+
+    // Load environment variables from .env
+    MongooseModule.forRoot(
+      'mongodb+srv://elearning:elearning123@cluster0.3ylmz.mongodb.net/E-learning',
+    ),
     QuizzesModule,
     UserInteractionsModule,
     RecommendationsModule,
@@ -33,10 +40,10 @@ import { NotificationModule } from './communication/notification/notification.mo
     ChatModule,
     ForumModule,
     NotificationModule,
-    AuthModule
+    AuthModule,
+    SchedulerModule,
   ],
 })
-
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
