@@ -1,40 +1,34 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
 
-import { HydratedDocument } from 'mongoose';
+export type QuizDocument = Quiz & Document;
 
-export type QuizDocument = HydratedDocument<Quiz>;
-
-@Schema({ timestamps: true }) // Automatically manages `createdAt` and `updatedAt`
+@Schema({ timestamps: true })
 export class Quiz {
-  @Prop({ required: true })
-  title: string; // Unique identifier for the quiz
+  @Prop({ type: Types.ObjectId, ref: 'Module', required: true })
+  moduleId: Types.ObjectId; // Reference to the related module
 
-  @Prop({ required: true })
-  module_id: string; // Associated module ID
+  @Prop({ type: Types.ObjectId, ref: 'User', required: false })
+userId?: Types.ObjectId; // This will be set during "start quiz"
 
-  difficulty: { type: String, required: true, enum: ['Easy', 'Medium', 'Hard'] }; // Difficulty leve
+
+  @Prop({ type: String, enum: ['Not Started', 'In Progress', 'Completed'], default: 'Not Started' })
+  status: string; // Status of the quiz
   
-  @Prop({
-    type: [
-      {
-        question_id: { type: String, required: true },
-        text: { type: String, required: true }, // Question text
-        options: { type: [String], required: true }, // Multiple-choice options
-        correctAnswer: { type: String, required: true }, // Correct option
-        explanation: { type: String, required: true }, // Explanation for feedback
-       
-      },
-    ],
-    required: true,
-  })
+  @Prop({ type: Number, required: true })
+  numberOfQuestions: number; // Number of questions in the quiz
+
+  @Prop({ type: [{ type: Object }], required: true })
   questions: Array<{
-    question_id: string;
     text: string;
+    type: string;
+    difficulty: string;
     options: string[];
     correctAnswer: string;
-    explanation: string;
-    
-  }>;
+  }>; // Selected questions for the quiz
+@Prop({ type: Number, required: false })
+grade?: number; // The user's grade for the quiz
+
 }
 
 export const QuizSchema = SchemaFactory.createForClass(Quiz);
