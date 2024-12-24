@@ -10,6 +10,6 @@ import { Modules, ModulesSchema } from './modules.schema';
   ],
   controllers: [ModulesController],
   providers: [ModulesService],
-  exports: [ModulesService],
+  exports: [ModulesService, MongooseModule], // Export MongooseModule
 })
 export class ModulesModule {}

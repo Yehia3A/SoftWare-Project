@@ -1,66 +1,52 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Param,
-  Body,
-  UseGuards,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { QuizzesService } from './quizzes.service';
 import { CreateQuizDto } from './dto/create-quiz.dto';
 import { UpdateQuizDto } from './dto/update-quiz.dto';
-import { SubmitAnswerDto } from './dto/submit-answer.dto';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Roles } from 'src/auth/decorator/roles.decorator';
-import { Role } from 'src/auth/dto/RoleDto';
 
 @Controller('quizzes')
-@UseGuards(RolesGuard)
 export class QuizzesController {
   constructor(private readonly quizzesService: QuizzesService) {}
 
-  // Create a quiz (Only for instructors)
- 
-   
-   @Post('create')
-   createQuiz(@Body() CreateQuizDto: CreateQuizDto) {
-     return this.quizzesService.createQuiz(CreateQuizDto);
-   }
+  @Post()
+async create(@Body() createQuizDto: CreateQuizDto) {
+  return this.quizzesService.create(createQuizDto);
+}
 
-  // Get all quizzes (For general access)
+
+@Post(':id/start')
+async startQuiz(
+  @Param('id') quizId: string,
+  @Body('userId') userId: string,
+) {
+  return this.quizzesService.startQuiz(quizId, userId);
+}
+
+
   @Get()
-  getAllQuizzes() {
-    return this.quizzesService.getAllQuizzes();
+  findAll() {
+    return this.quizzesService.findAll();
   }
 
-  // Get a specific quiz by ID
   @Get(':id')
-  getQuizById(@Param('id') quizId: string) {
-    return this.quizzesService.getQuizById(quizId);
+  findOne(@Param('id') id: string) {
+    return this.quizzesService.findOne(id);
   }
 
-  // Update a quiz (Only for instructors)
- 
-  @Put(':id')
-  updateQuiz(
-    @Param('id') quizId: string,
-    @Body() updateQuizDto: UpdateQuizDto,
-  ) {
-    return this.quizzesService.updateQuiz(quizId, updateQuizDto);
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateQuizDto: UpdateQuizDto) {
+    return this.quizzesService.update(id, updateQuizDto);
   }
 
-  
   @Delete(':id')
-  deleteQuiz(@Param('id') quizId: string) {
-    return this.quizzesService.deleteQuiz(quizId);
+  remove(@Param('id') id: string) {
+    return this.quizzesService.remove(id);
   }
+  @Post(':id/submit')
+async submitQuiz(
+  @Param('id') quizId: string,
+  @Body() userAnswers: Record<string, string>, // User answers in key-value format
+) {
+  return this.quizzesService.gradeQuiz(quizId, userAnswers);
+}
 
-  // Submit answers to a quiz (For students)
-  @Post('submit')
-  submitAnswers(@Body() submitAnswerDto: SubmitAnswerDto) {
-    return this.quizzesService.submitAnswers(submitAnswerDto);
-  }
 }
