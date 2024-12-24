@@ -8,6 +8,16 @@ import { UpdateProgressDto } from './dto/update-progress.dto';
 export class ProgressController {
   constructor(private readonly progressService: ProgressService) {}
 
+  // Download analytics as CSV
+  @Get('download-analytics')
+  async downloadAnalytics(@Query('course_id') course_id: string, @Res() res: Response) {
+    const analytics = await this.progressService.getInstructorAnalytics(course_id);
+    const csv = this.convertToCSV(analytics);
+    res.header('Content-Type', 'text/csv');
+    res.attachment('analytics.csv');
+    res.send(csv);
+  }
+
   // Create a new progress record
   @Post()
   async createProgress(@Body() createProgressDto: CreateProgressDto) {
@@ -59,19 +69,9 @@ export class ProgressController {
     return this.progressService.deleteProgress(id);
   }
 
-  // Download analytics as CSV
-  @Get('download-analytics')
-  async downloadAnalytics(@Query('course_id') course_id: string, @Res() res: Response) {
-    const analytics = await this.progressService.getInstructorAnalytics(course_id);
-    const csv = this.convertToCSV(analytics);
-    res.header('Content-Type', 'text/csv');
-    res.attachment('analytics.csv');
-    res.send(csv);
-  }
-
   private convertToCSV(data: any): string {
     const headers = Object.keys(data).join(',');
-    const values = Object.values(data).join(',');
+    const values = Object.values(data).map(value => isNaN(Number(value)) ? 0 : Number(value)).join(',');
     return `${headers}\n${values}`;
   }
 }
