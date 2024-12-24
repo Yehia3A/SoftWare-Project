@@ -1,28 +1,47 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
-import { Course } from '../courses/courses.schema';
+import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
 
-
-export type ModulesDocument = HydratedDocument<Modules>;
+export type ModuleDocument = Modules & Document;
 
 @Schema({ timestamps: true })
 export class Modules {
-  @Prop({ type: Types.ObjectId, ref: Course.name, required: true })
-  course_id: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'Course', required: true })
+  course_id: Types.ObjectId; // Reference to the parent course
 
   @Prop({ required: true })
-  title: string;
+  title: string; // Module title
 
   @Prop({ required: true })
-  content: string;
+  content: string; // Module content
 
-  @Prop({ type: [String], default: [] })
-  resources: string[]; // Array of URLs to additional resources
-
-  @Prop({ default: Date.now })
-  created_at: Date; // Custom creation date if needed (timestamps already handled by mongoose)
-
+  @Prop({
+    type: [
+      {
+        text: { type: String, required: true }, // Question text
+        difficulty: { type: String, required: true, enum: ['Easy', 'Medium', 'Hard'] }, // Difficulty
+        options: {
+          type: [String],
+          validate: {
+            validator: function (v: string[]) {
+              return v.length >= 2; // At least 2 options required
+            },
+            message: 'MCQ questions must have at least 2 options.',
+          },
+        },
+        correctAnswer: { type: String, required: true }, // Correct answer
+        explanation: { type: String, required: false }, // Explanation for feedback
+      },
+    ],
+    default: [],
+  })
+  questionBank: Array<{
+    text: string;
+    type: string;
+    difficulty: string;
+    options?: string[];
+    correctAnswer: string;
+    explanation?: string;
+  }>;
 }
 
-// Create and export the schema for use
 export const ModulesSchema = SchemaFactory.createForClass(Modules);

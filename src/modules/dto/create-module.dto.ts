@@ -1,10 +1,33 @@
+import { IsString, IsArray, IsNotEmpty, IsIn, IsOptional } from 'class-validator';
 
-import { IsString, IsNotEmpty, IsArray, IsOptional } from 'class-validator';
-import { Types } from 'mongoose';
+export class CreateQuestionDto {
+  @IsString()
+  @IsNotEmpty()
+  text: string;
+
+  
+  @IsString()
+  @IsNotEmpty()
+  @IsIn(['Easy', 'Medium', 'Hard'])
+  difficulty: string;
+
+  @IsArray()
+  @IsOptional()
+  options?: string[];
+
+  @IsString()
+  @IsNotEmpty()
+  correctAnswer: string;
+
+  @IsString()
+  @IsOptional()
+  explanation?: string;
+}
 
 export class CreateModuleDto {
+  @IsString()
   @IsNotEmpty()
-  course_id: Types.ObjectId;
+  course_id: string;
 
   @IsString()
   @IsNotEmpty()
@@ -13,10 +36,8 @@ export class CreateModuleDto {
   @IsString()
   @IsNotEmpty()
   content: string;
-  
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  resources?: string[];
 
+  @IsArray()
+  @IsOptional()
+  questionBank?: CreateQuestionDto[];
 }

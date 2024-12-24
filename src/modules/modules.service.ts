@@ -1,50 +1,43 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Modules, ModulesDocument} from './modules.schema'
+import { Modules, ModuleDocument } from './modules.schema';
 import { CreateModuleDto } from './dto/create-module.dto';
 import { UpdateModuleDto } from './dto/update-module.dto';
 
 @Injectable()
 export class ModulesService {
-  constructor(
-    @InjectModel(Modules.name) private ModulesModel: Model<ModulesDocument>,
-  ) {}
+  constructor(@InjectModel(Modules.name) private moduleModel: Model<ModuleDocument>) {}
 
-  async createModule(createModulesDto: CreateModuleDto): Promise<Modules> {
-    const createdModules = new this.ModulesModel(createModulesDto);
-    return createdModules.save();
+  async create(createModuleDto: CreateModuleDto): Promise<Modules> {
+    const createdModule = new this.moduleModel(createModuleDto);
+    return createdModule.save();
   }
 
+  async findAll(): Promise<Modules[]> {
+    return this.moduleModel.find().exec();
+  }
 
-    async getModuleByCourseId(course_id: string): Promise<Modules[]> {
-        const Moduless = await this.ModulesModel.find({ course_id }).exec();
-        if (!Moduless.length) {
-            throw new NotFoundException(
-                `No Moduless found for the course ID: ${course_id}`,
-            );
-        }
-        return Moduless;
+  async findOne(id: string): Promise<Modules> {
+    const module = await this.moduleModel.findById(id).exec();
+    if (!module) {
+      throw new NotFoundException(`Module with ID "${id}" not found`);
     }
+    return module;
+  }
 
-    async updateModule(id: string, updateModulesDto: UpdateModuleDto): Promise<Modules> {
-        const updatedModules = await this.ModulesModel
-            .findByIdAndUpdate(id, updateModulesDto, { new: true })
-            .exec();
-        if (!updatedModules) {
-            throw new NotFoundException(`Modules with ID: ${id} not found`);
-        }
-        return updatedModules;
+  async update(id: string, updateModuleDto: UpdateModuleDto): Promise<Modules> {
+    const updatedModule = await this.moduleModel.findByIdAndUpdate(id, updateModuleDto, { new: true }).exec();
+    if (!updatedModule) {
+      throw new NotFoundException(`Module with ID "${id}" not found`);
     }
+    return updatedModule;
+  }
 
-    async deleteModule(id: string): Promise<{ message: string }> {
-        const result = await this.ModulesModel.findByIdAndDelete(id).exec();
-        if (!result) {
-            throw new NotFoundException(`Modules with ID: ${id} not found`);
-        }
-        return { message: `Modules with ID: ${id} successfully deleted` };
+  async remove(id: string): Promise<void> {
+    const result = await this.moduleModel.findByIdAndDelete(id).exec();
+    if (!result) {
+      throw new NotFoundException(`Module with ID "${id}" not found`);
     }
-
-
-
+  }
 }

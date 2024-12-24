@@ -23,7 +23,7 @@ async function bootstrap() {
   // Global validation pipe
   app.useGlobalPipes(new ValidationPipe());
 
-  const port = 3000;
+  const port = 3004;
   await app.listen(port);
 
   console.log(`Server running at http://localhost:${port}`);
