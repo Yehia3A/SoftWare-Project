@@ -13,7 +13,8 @@ export class Modules {
 
   @Prop({ required: true })
   content: string; // Module content
-
+  @Prop({ required: true })
+  resources?: string[];
   @Prop({
     type: [
       {

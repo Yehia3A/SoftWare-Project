@@ -1,5 +1,5 @@
-import { IsString, IsArray, IsNotEmpty, IsIn, IsOptional } from 'class-validator';
-
+import { IsString, IsArray, IsNotEmpty, IsIn, IsOptional, Validate } from 'class-validator';
+import { IsCourseIdValidConstraint } from 'src/validators/is-course-id-valid.validator';
 export class CreateQuestionDto {
   @IsString()
   @IsNotEmpty()
@@ -25,14 +25,17 @@ export class CreateQuestionDto {
 }
 
 export class CreateModuleDto {
-  @IsString()
-  @IsNotEmpty()
-  course_id: string;
+ 
 
   @IsString()
   @IsNotEmpty()
   title: string;
+  
+  @IsArray()
+  @IsOptional()
+  resources?: string[]; // New field for resources (optional)
 
+  
   @IsString()
   @IsNotEmpty()
   content: string;
