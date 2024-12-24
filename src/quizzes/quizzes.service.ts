@@ -164,12 +164,20 @@ export class QuizzesService {
   
     // Calculate the grade
     let correctAnswersCount = 0;
-  
+    const feedback = [];
     quiz.questions.forEach((question) => {
       const userAnswer = userAnswers[question['id']];
-      if (userAnswer && userAnswer === question.correctAnswer) {
+      const isCorrect = userAnswer && userAnswer === question.correctAnswer;
+      if (isCorrect) {
         correctAnswersCount++;
       }
+       // Add feedback for each question
+       feedback.push({
+        question: question.text,
+        userAnswer: userAnswer || null,
+        correctAnswer: question.correctAnswer,
+        isCorrect,
+      });
     });
   
     const grade = (correctAnswersCount / quiz.numberOfQuestions) * 100;
@@ -181,6 +189,7 @@ export class QuizzesService {
   
     return grade;
   }
+  
   
 }
 
