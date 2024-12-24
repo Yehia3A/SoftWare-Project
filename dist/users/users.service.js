@@ -27,6 +27,9 @@ let UsersService = class UsersService {
     async findByEmail(email) {
         return this.userModel.findOne({ email }).exec();
     }
+    async findById(id) {
+        return this.userModel.findById(id).exec();
+    }
     async getAllUsers() {
         return this.userModel.find();
     }
@@ -70,6 +73,7 @@ let UsersService = class UsersService {
                 message: 'Login successful',
                 accessToken,
                 role: user.role,
+                _id: user._id,
             });
         }
         catch (error) {

@@ -11,6 +11,7 @@ export declare class UsersService {
     private jwtService;
     constructor(userModel: Model<UserDocument>, jwtService: JwtService);
     findByEmail(email: string): Promise<User>;
+    findById(id: string): Promise<User>;
     getAllUsers(): Promise<User[]>;
     register(createUserDto: RegisterUserDto): Promise<User>;
     login(loginUserDto: LoginUserDto, res: Response): Promise<Response<any, Record<string, any>>>;
