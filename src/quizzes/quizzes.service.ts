@@ -189,7 +189,4 @@ export class QuizzesService {
   
     return grade;
   }
-  
-  
 }
-

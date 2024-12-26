@@ -1,62 +1,63 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Modules, ModuleDocument } from './modules.schema';
-import { Progress, ProgressDocument } from '../progress/progress.schema'; // Import Progress model
+import { Modules } from './modules.schema';
 import { CreateModuleDto } from './dto/create-module.dto';
 import { UpdateModuleDto } from './dto/update-module.dto';
 
 @Injectable()
 export class ModulesService {
   constructor(
-    @InjectModel(Modules.name) private readonly moduleModel: Model<ModuleDocument>,
-    @InjectModel(Progress.name) private readonly progressModel: Model<ProgressDocument>, // Inject Progress model
+    @InjectModel(Modules.name) private readonly moduleModel: Model<Modules>,
   ) {}
 
-  async create(createModuleDto: CreateModuleDto): Promise<Modules> {
-    const createdModule = new this.moduleModel(createModuleDto);
-    return createdModule.save();
+  // Create a new module for a specific course
+  async createModule(
+    createModuleDto: CreateModuleDto,
+    courseId: string,
+  ): Promise<Modules> {
+    const newModule = new this.moduleModel({
+      ...createModuleDto,
+      course_id: courseId,
+    });
+    return await newModule.save();
   }
 
-  async findAll(): Promise<Modules[]> {
-    return this.moduleModel.find().exec();
+  // Find all modules for a specific course
+  async findAllByCourseId(courseId: string): Promise<Modules[]> {
+    const modules = await this.moduleModel.find({ course_id: courseId }).exec();
+    if (!modules || modules.length === 0) {
+      throw new NotFoundException(`No modules found for course ID: ${courseId}`);
+    }
+    return modules;
   }
 
+  // Find a single module by its ID
   async findOne(id: string): Promise<Modules> {
     const module = await this.moduleModel.findById(id).exec();
     if (!module) {
-      throw new NotFoundException(`Module with ID "${id}" not found`);
+      throw new NotFoundException(`Module with ID: ${id} not found`);
     }
     return module;
   }
 
+  // Update a module by its ID
   async update(id: string, updateModuleDto: UpdateModuleDto): Promise<Modules> {
-    const updatedModule = await this.moduleModel.findByIdAndUpdate(id, updateModuleDto, { new: true }).exec();
+    const updatedModule = await this.moduleModel
+      .findByIdAndUpdate(id, updateModuleDto, { new: true })
+      .exec();
     if (!updatedModule) {
-      throw new NotFoundException(`Module with ID "${id}" not found`);
+      throw new NotFoundException(`Module with ID: ${id} not found`);
     }
     return updatedModule;
   }
 
-  async remove(id: string): Promise<void> {
+  // Remove a module by its ID
+  async remove(id: string): Promise<{ message: string }> {
     const result = await this.moduleModel.findByIdAndDelete(id).exec();
     if (!result) {
-      throw new NotFoundException(`Module with ID "${id}" not found`);
+      throw new NotFoundException(`Module with ID: ${id} not found`);
     }
-  }
-
-  async getModulesForStudent(user_id: string): Promise<Modules[]> {
-    const progress = await this.progressModel.findOne({ user_id }).exec();
-    if (!progress) {
-      return [];
-    }
-    const difficulty = this.getDifficultyFromScore(progress.average_score);
-    return this.moduleModel.find({ difficulty }).exec();
-  }
-
-  private getDifficultyFromScore(score: number): 'Beginner' | 'Intermediate' | 'Advanced' {
-    if (score < 50) return 'Beginner';
-    if (score < 75) return 'Intermediate';
-    return 'Advanced';
+    return { message: `Module with ID: ${id} successfully deleted` };
   }
 }

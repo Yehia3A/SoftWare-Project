@@ -20,6 +20,7 @@ userId?: Types.ObjectId; // This will be set during "start quiz"
 
   @Prop({ type: [{ type: Object }], required: true })
   questions: Array<{
+    
     text: string;
     type: string;
     difficulty: string;

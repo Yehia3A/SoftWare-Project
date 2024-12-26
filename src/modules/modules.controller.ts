@@ -1,40 +1,53 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ModulesService } from './modules.service';
 import { CreateModuleDto } from './dto/create-module.dto';
 import { UpdateModuleDto } from './dto/update-module.dto';
-import { Modules } from './modules.schema';
 
-@Controller('modules')
+@Controller('courses/:courseId/modules')
 export class ModulesController {
   constructor(private readonly modulesService: ModulesService) {}
 
+  // Create a new module for the specified course
   @Post()
-  create(@Body() createModuleDto: CreateModuleDto) {
-    return this.modulesService.create(createModuleDto);
+  async createModule(
+    @Param('courseId') courseId: string,
+    @Body() createModuleDto: CreateModuleDto,
+  ) {
+    return await this.modulesService.createModule(createModuleDto, courseId);
   }
 
+  // Get all modules for the specified course
   @Get()
-  findAll() {
-    return this.modulesService.findAll();
+  async findAll(@Param('courseId') courseId: string) {
+    return await this.modulesService.findAllByCourseId(courseId);
   }
 
+  // Get a single module by its ID
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.modulesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.modulesService.findOne(id);
   }
 
+  // Update a module by its ID
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateModuleDto: UpdateModuleDto) {
-    return this.modulesService.update(id, updateModuleDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateModuleDto: UpdateModuleDto,
+  ) {
+    return await this.modulesService.update(id, updateModuleDto);
   }
 
+  // Delete a module by its ID
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.modulesService.remove(id);
-  }
-
-  @Get('student')
-  async getModulesForStudent(@Query('user_id') user_id: string): Promise<Modules[]> {
-    return this.modulesService.getModulesForStudent(user_id);
+  async remove(@Param('id') id: string) {
+    return await this.modulesService.remove(id);
   }
 }

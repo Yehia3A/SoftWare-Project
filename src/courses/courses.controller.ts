@@ -8,6 +8,7 @@ import {
   Body,
   UseGuards,
   Query,
+  NotFoundException,
 } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
@@ -15,10 +16,12 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { Role } from 'src/auth/dto/RoleDto';
+import { ModulesService } from 'src/modules/modules.service';
 
 @Controller('courses')
 export class CoursesController {
-  constructor(private readonly coursesService: CoursesService) {}
+  constructor(private readonly coursesService: CoursesService,private readonly modulesService: ModulesService) {}
+  
   @Roles(Role.Instructor)
   @Post('create-course')
   createCourse(@Body() createCourseDto: CreateCourseDto) {
@@ -56,4 +59,5 @@ export class CoursesController {
   deleteCourse(@Param('id') courseId: string) {
     return this.coursesService.deleteCourse(courseId);
   }
+  
 }
