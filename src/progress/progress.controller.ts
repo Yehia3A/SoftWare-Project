@@ -1,11 +1,22 @@
-import { Controller, Post, Patch, Get, Param, Body, Delete, Query } from '@nestjs/common';
-import { progressService } from './progress.service';
+import { Controller, Post, Patch, Get, Param, Body, Delete, Query, Res } from '@nestjs/common';
+import { Response } from 'express';
+import { ProgressService } from './progress.service'; // Correct import
 import { CreateProgressDto } from './dto/create-progress.dto';
 import { UpdateProgressDto } from './dto/update-progress.dto';
 
 @Controller('progress')
-export class progressController {
-  constructor(private readonly progressService: progressService) {}
+export class ProgressController {
+  constructor(private readonly progressService: ProgressService) {}
+
+  // Download analytics as CSV
+  @Get('download-analytics')
+  async downloadAnalytics(@Query('course_id') course_id: string, @Res() res: Response) {
+    const analytics = await this.progressService.getInstructorAnalytics(course_id);
+    const csv = this.convertToCSV(analytics);
+    res.header('Content-Type', 'text/csv');
+    res.attachment('analytics.csv');
+    res.send(csv);
+  }
 
   // Create a new progress record
   @Post()
@@ -46,9 +57,21 @@ export class progressController {
     return this.progressService.getInstructorAnalytics(course_id);
   }
 
+  // Get quiz results by quiz ID
+  @Get('quiz-results/:quiz_id')
+  async getQuizResults(@Param('quiz_id') quiz_id: string) {
+    return this.progressService.getQuizResults(quiz_id);
+  }
+
   // Delete a progress record by MongoDB ObjectID
   @Delete(':id')
   async deleteProgress(@Param('id') id: string) {
     return this.progressService.deleteProgress(id);
+  }
+
+  private convertToCSV(data: any): string {
+    const headers = Object.keys(data).join(',');
+    const values = Object.values(data).map(value => isNaN(Number(value)) ? 0 : Number(value)).join(',');
+    return `${headers}\n${values}`;
   }
 }

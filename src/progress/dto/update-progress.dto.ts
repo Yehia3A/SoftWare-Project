@@ -1,12 +1,4 @@
-import { IsNumber, Min, Max, IsOptional } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateProgressDto } from './create-progress.dto';
 
-export class UpdateProgressDto {
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  @Max(100)
-  completion_percentage?: number;
-
-  @IsOptional()
-  created_at?: Date;
-}
+export class UpdateProgressDto extends PartialType(CreateProgressDto) {}

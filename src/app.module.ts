@@ -19,6 +19,7 @@ import { NotificationModule } from './communication/notification/notification.mo
 import { SchedulerModule } from './scheduler/scheduler.module';
 import { scheduler } from 'timers/promises';
 import { ScheduleModule } from '@nestjs/schedule';
+import { QuizResultsModule } from './quiz-results/quiz-results.module'; // Import QuizResultsModule
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     NotificationModule,
     AuthModule,
     SchedulerModule,
+    QuizResultsModule, // Add QuizResultsModule
   ],
 })
 export class AppModule {

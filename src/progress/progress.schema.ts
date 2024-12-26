@@ -3,9 +3,10 @@ import { Document, Types } from 'mongoose';
 import { Course } from '../courses/courses.schema'; 
 import { User } from '../users/user.schema'; 
 
+export type ProgressDocument = Progress & Document; // Export ProgressDocument
+
 @Schema({ timestamps: true })
 export class Progress extends Document {
-
   @Prop({ type: Types.ObjectId, ref: Course.name, required: true })
   course_id: Types.ObjectId;
 
@@ -14,6 +15,9 @@ export class Progress extends Document {
 
   @Prop({ required: true, min: 0, max: 100, default: 0 })
   completion_percentage: number;
+
+  @Prop({ required: true, min: 0, max: 100, default: 0 })
+  average_score: number;
 
   @Prop({ default: Date.now })
   created_at: Date;

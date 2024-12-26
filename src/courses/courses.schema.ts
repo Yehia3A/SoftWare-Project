@@ -3,25 +3,28 @@ import { HydratedDocument } from 'mongoose';
 
 export type CourseDocument = HydratedDocument<Course>;
 
-@Schema({ timestamps: true }) // Automatically manages `createdAt` and `updatedAt`
+@Schema({ timestamps: true })
 export class Course {
   @Prop({ required: true })
-  title: string; // Course title
+  title: string;
 
   @Prop({ default: 'This course has no description' })
-  description: string; // Optional course description with a default value
+  description: string;
 
   @Prop({ required: true })
-  category: string; // Course category (e.g., Math, CS)
+  category: string;
 
   @Prop({ required: true })
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced'; // Difficulty level
+  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
 
   @Prop({ required: true })
-  createdBy: string; // ID of the instructor who created the course
+  createdBy: string;
 
-  @Prop({default: false})
+  @Prop({ default: false })
   isDeleted: boolean;
+
+  @Prop({ default: 0 })
+  average_rating: number;
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);
